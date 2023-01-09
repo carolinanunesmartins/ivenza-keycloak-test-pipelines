@@ -1,4 +1,4 @@
-# Setup keycloak ivenza environment variables.
+# Setup keycloak environment variables.
 
 ## Create a .env file:
 Create a `.env` in this folder, which looks like the following.
@@ -18,10 +18,4 @@ KEYCLOAK_DATABASE_USER=[KEYCLOAK-DB-USER]
 KEYCLOAK_DATABASE_PASSWORD=[KEYCLOAK-DB-USER-PASSWORD]
 KEYCLOAK_DATABASE_HOST=keycloakdb
 KEYCLOAK_DATABASE_VENDOR=postgres
-
-IVENZA_DBUSER=[IVENZA_DBUSER]
-IVENZA_DBPASS=[IVENZA_DBPASS]
-IVENZA_DBNAME=ivenza
-
-MYSQL_ROOT_PASSWORD=[ROOT_PASSWORD_FOR_MARIADB]
 ```
