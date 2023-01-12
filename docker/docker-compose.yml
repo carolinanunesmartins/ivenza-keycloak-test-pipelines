@@ -1,7 +1,7 @@
 version: '3.9'
 networks:
   default:
-    external: 
+    external:
       name: unicon-ivenza
 services:
   keycloakdb:
@@ -16,11 +16,12 @@ services:
       - unicon-kc_pg:/var/lib/postgresql/data
 
   keycloak:
-    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
-    command: 
-      - start-dev
-      - -Dkeycloak.import=/tmp/delihome-realm.json
-      - -Dkeycloak.migration.strategy=SKIP
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      args:
+      - KEYCLOAK_VERSION=${KEYCLOAK_VERSION}
+
     environment:
       - KC_DB=postgres
       - KC_DB_URL_HOST=keycloakdb
@@ -32,9 +33,6 @@ services:
       - "8080:8080"
     depends_on:
       - keycloakdb
-    volumes:
-        - ../themes/ivenza:/opt/keycloak/themes/ivenza
-        - ../config/delihome-realm.json:/tmp/delihome-realm.json
 
 volumes:
   unicon-kc_pg:
