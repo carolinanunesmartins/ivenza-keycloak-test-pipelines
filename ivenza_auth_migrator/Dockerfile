@@ -5,8 +5,7 @@ RUN apt-get update && apt-get install -y default-libmysqlclient-dev
 
 RUN mkdir /source
 WORKDIR /source
-COPY ./Cargo.toml ./Cargo.lock ./
-COPY ./src/ ./src
+COPY ./ ./
 
 RUN cargo build --release
 RUN strip ./target/release/ivenza_auth_migrator
