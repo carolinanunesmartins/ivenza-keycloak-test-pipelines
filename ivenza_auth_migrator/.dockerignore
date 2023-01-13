@@ -1,0 +1,14 @@
+# ignore non code files
+*.md
+*.yml
+*.yaml
+Dockerfile
+.dockerignore
+*.txt
+.env
+
+# ignore target folder
+target
+
+# ignore idea folders created by jetbrains ide's like CLION
+.idea
