@@ -18,8 +18,8 @@ RUN cd /tmp && \
 
 # use a distroless/cc image as base to run the dynamically linked rust application in
 FROM gcr.io/distroless/cc as runtime
-
-COPY --from=builder /dpkg/usr/lib/x86_64-linux-gnu/libmariadb.so.3 /dpkg/usr/lib/x86_64-linux-gnu/libz.so ./usr/lib/
+COPY --from=builder /dpkg/usr/lib/x86_64-linux-gnu/libmariadb.so.3 ./usr/lib/libmariadb.so.3
+COPY --from=builder /dpkg/usr/lib/x86_64-linux-gnu/libz.so /usr/lib/libz.so.1
 COPY --from=builder /source/target/release/ivenza_auth_migrator /
 
 CMD ["./ivenza_auth_migrator"]
