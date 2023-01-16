@@ -25,5 +25,5 @@ You can now spin up your keycloak instance using docker-compose. Navigate to the
 
 # Running the migration tool.
 Before running the migration tool, you need to have both a running keycloak environment, as well as a ivenza environment with access to it's database.
-Set the correct envirnment variables in [`./ivenza_auth_migrator/docker-compose.yml`](./ivenza_auth_migrator/docker-compose.yml) to set it's connection variables.
+Once these a up and running, please consult the [migrator readme file](./ivenza_auth_migrator/README.md) to run the migration tool using Docker
 
