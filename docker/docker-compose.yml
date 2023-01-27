@@ -5,15 +5,17 @@ networks:
       name: unicon-ivenza
 services:
   keycloakdb:
-    image: postgres:${POSTGRES_VERSION}
-    ports:
-      - "5433:5432"
+    image: mariadb
+    restart: always
     environment:
-      - POSTGRES_USER=${KEYCLOAK_DATABASE_USER}
-      - POSTGRES_PASSWORD=${KEYCLOAK_DATABASE_PASSWORD}
-      - POSTGRES_DB=${KEYCLOAK_DATABASE_NAME}
+      MYSQL_ROOT_PASSWORD: ${KEYCLOAK_PASSWORD}
+      MYSQL_DATABASE: ${KEYCLOAK_DATABASE_NAME}
+      MYSQL_USER: ${KEYCLOAK_DATABASE_USER}
+      MYSQL_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+    ports:
+      - 3307:3306 
     volumes:
-      - unicon-kc_pg:/var/lib/postgresql/data
+      - ivenza-keycloak-volume:/var/lib/mysql
 
   keycloak:
     build:
@@ -23,7 +25,7 @@ services:
       - KEYCLOAK_VERSION=${KEYCLOAK_VERSION}
 
     environment:
-      - KC_DB=postgres
+      - KC_DB=mariadb
       - KC_DB_URL_HOST=keycloakdb
       - KC_DB_USERNAME=${KEYCLOAK_DATABASE_USER}
       - KC_DB_PASSWORD=${KEYCLOAK_DATABASE_PASSWORD}
@@ -35,4 +37,4 @@ services:
       - keycloakdb
 
 volumes:
-  unicon-kc_pg:
+  ivenza-keycloak-volume:
