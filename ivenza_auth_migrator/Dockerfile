@@ -6,8 +6,9 @@ RUN apt-get update && apt-get install -y default-libmysqlclient-dev
 RUN mkdir /source
 WORKDIR /source
 COPY ./ ./
-
-RUN cargo build --release
+# added --config net.git-fetch-with-client=tue flag to cargo to work around 137 error (oom), 
+# like described here https://github.com/rust-lang/cargo/issues/10781
+RUN cargo build --config net.git-fetch-with-cli=true  --release
 RUN strip ./target/release/ivenza_auth_migrator
 
 # extract temporary packages needed in runtime to /dpkg

@@ -1,8 +1,8 @@
 version: '3.9'
 networks:
   default:
-    external:
-      name: unicon-ivenza
+    external: true
+    name: unicon-ivenza
 services:
   keycloakdb:
     image: mariadb:10.3
