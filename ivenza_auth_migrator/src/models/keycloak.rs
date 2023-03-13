@@ -14,6 +14,17 @@ pub struct RoleResponse {
     pub container_id: Uuid,
 }
 
+#[derive(Deserialize, Debug)]
+pub struct UserResponse {
+    pub id: Uuid,
+    #[serde(rename = "username")]
+    pub user_name: String,
+    #[serde(rename = "firstName")]
+    pub first_name: String,
+    #[serde(rename = "lastName")]
+    pub last_name: String,
+}
+
 #[derive(Serialize, Debug)]
 pub struct CreateRoleRequest {
     name: String,

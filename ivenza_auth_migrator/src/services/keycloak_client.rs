@@ -8,6 +8,7 @@ use std::env;
 use std::error::Error;
 
 const ROLES_PATH: &str = "/roles";
+const USERS_PATH: &str = "/users";
 const AUTHORIZATION_HEADER: &str = "Authorization";
 const AUTHORIZATION_BEARER_TOKEN: &str = "Bearer";
 const ADMIN_BASE_URL_KEY: &str = "ADMIN_BASE_URL";
@@ -39,6 +40,13 @@ impl KeycloakClient {
     pub async fn get_roles(&mut self) -> Result<Vec<RoleResponse>, Box<dyn Error>> {
         // construct the roles endpoint url.
         let roles_endpoint = format!("{}{}", self.admin_base_url, ROLES_PATH);
+        return self.http_get(roles_endpoint).await;
+    }
+
+    /// Gets all the realm roles from Keycloak.
+    pub async fn get_users(&mut self) -> Result<Vec<UserResponse>, Box<dyn Error>> {
+        // construct the roles endpoint url.
+        let roles_endpoint = format!("{}{}", self.admin_base_url, USERS_PATH);
         return self.http_get(roles_endpoint).await;
     }
 

@@ -15,6 +15,16 @@ pub struct Role {
     pub name: String,
     pub display_name: String,
 }
+
+#[derive(Queryable, Debug)]
+#[diesel(table_name = Users)]
+pub struct User {
+    pub id: i32,
+    pub login_name: String,
+    pub role: String,
+    pub email: String,
+    pub password: String,
+}
 // Compare trait implementations to compare permissions for equality.
 impl Eq for Permission {}
 

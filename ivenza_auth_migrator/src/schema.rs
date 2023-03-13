@@ -15,3 +15,15 @@ table! {
         permission -> Text,
     }
 }
+
+table! {
+#[allow(non_snake_case)]
+    Users(id) {
+        id -> Integer,
+        #[sql_name = "loginName"]
+        login_name -> Text,
+        role -> Text,
+        email -> Text,
+        password -> Text,
+    }
+}
