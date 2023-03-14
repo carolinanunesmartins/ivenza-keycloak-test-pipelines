@@ -2,14 +2,28 @@ use super::IvenzaClient;
 use super::KeycloakClient;
 use std::error::Error;
 
+use std::env;
 pub struct UserSyncer;
+
+const SKIP_INTERNAL_USERS_KEY: &str = "SKIP_INTERNAL_USERS";
 
 impl UserSyncer {
     /// Synchronizes roles from Ivenza to keycloak.
     pub async fn sync() -> Result<(), Box<dyn Error>> {
-        println!("Getting users");
+        let skip_internal_users = env::var(SKIP_INTERNAL_USERS_KEY)
+            .unwrap_or_default()
+            .eq("true");
+
         // Get all the known roles in ivenza.
-        let ivenza_users = IvenzaClient::get_users();
+        let mut ivenza_users = IvenzaClient::get_users();
+        if skip_internal_users {
+            ivenza_users = ivenza_users
+                .into_iter()
+                .filter(|u| {
+                    !u.email.contains("@uniconcreation.com") && !u.email.contains("@delihome.com")
+                })
+                .collect();
+        }
 
         println!("Retrieved {} users", ivenza_users.len());
         // Retrieve the known roles from Keycloak.
