@@ -17,12 +17,12 @@ use crate::services::{
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize environment variables.
     dotenv().ok();
-    // RoleSyncer::sync().await?;
-    // ScopeSyncer::sync().await?;
-    // PolicySyncer::sync().await?;
-    // ResourceSyncer::sync().await?;
-    // PermissionSyncer::sync().await?;
-    // ImportValidator::validate().await?;
+    RoleSyncer::sync().await?;
+    ScopeSyncer::sync().await?;
+    PolicySyncer::sync().await?;
+    ResourceSyncer::sync().await?;
+    PermissionSyncer::sync().await?;
+    ImportValidator::validate().await?;
     UserSyncer::sync().await?;
     Ok(())
 }
