@@ -22,7 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     PolicySyncer::sync().await?;
     ResourceSyncer::sync().await?;
     PermissionSyncer::sync().await?;
-    ImportValidator::validate().await?;
     UserSyncer::sync().await?;
+    ImportValidator::validate().await?;
     Ok(())
 }
