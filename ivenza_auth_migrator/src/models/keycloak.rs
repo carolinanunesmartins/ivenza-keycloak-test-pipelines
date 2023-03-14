@@ -55,7 +55,13 @@ pub struct CreateUserRequest {
     email_verified: bool,
     credentials: Option<Vec<Credentials>>,
     groups: Option<Vec<String>>,
-    attributes: Option<Vec<String>>,
+    attributes: Option<UserAttribute>,
+}
+
+#[derive(Serialize, Debug)]
+pub struct UserAttribute {
+    #[serde(rename = "ivenzaId")]
+    ivenza_id: Vec<String>,
 }
 
 #[derive(Serialize, Debug)]
@@ -82,7 +88,9 @@ impl From<&User> for CreateUserRequest {
             email: user.email.to_string(),
             email_verified: true,
             groups: Some(vec![]),
-            attributes: Some(vec![]),
+            attributes: Some(UserAttribute {
+                ivenza_id: vec![user.id.to_string()],
+            }),
             credentials: Some(vec![Credentials {
                 credential_type: CredentialType::Password,
                 value: user.password.to_string(),
