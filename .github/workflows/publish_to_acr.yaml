@@ -3,7 +3,7 @@ name: "Publish keycloak image to ACR"
 env:
   MICROSERVICE_NAME: keycloak
   DOCKERFILE: docker/Dockerfile
-  ACR_URL: binsendcontainerregistry.azurecr.io
+  ACR_URL: uniconcontainerregistry.azurecr.io
 
 on:
   push:
