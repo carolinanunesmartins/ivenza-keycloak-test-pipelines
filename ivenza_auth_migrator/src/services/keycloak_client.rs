@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::env;
 use std::error::Error;
 use std::fmt;
+use uuid::Uuid;
 
 const ROLES_PATH: &str = "/roles";
 const USERS_PATH: &str = "/users";
@@ -270,6 +271,17 @@ impl KeycloakClient {
         Ok(())
     }
 
+    pub async fn delete_permission(&mut self, id: &Uuid) -> Result<(), Box<dyn Error>> {
+        // construct the roles endpoint url.
+        let delete_permission_endpoint = format!(
+            "{}/clients/{}/authz/resource-server/permission/scope/{}",
+            self.admin_base_url, self.client_id, id
+        );
+        // post to keycloak
+        self.http_delete(delete_permission_endpoint).await;
+        Ok(())
+    }
+
     /// Asynchronously performs a Http get request to the given endpoint and deserialized the JSON response to the
     /// given type T.
     async fn http_get<T>(&mut self, endpoint: String) -> Result<Vec<T>, Box<dyn Error>>
@@ -346,6 +358,34 @@ impl KeycloakClient {
                 }
             }
             StatusCode::NO_CONTENT => Ok("".to_string()),
+            _ => {
+                // Oh-oh, something went wrong, log the response body and throw the exception.
+                println!("{:?}", resp);
+                let _ = utility::print_response_body(&mut resp).await;
+                panic!("Unable to insert item in Keycloak")
+            }
+        }
+    }
+
+    async fn http_delete(&mut self, endpoint: String) -> Result<(), Box<dyn Error>> {
+        // Get an access_token authorize at the keycloak instance.
+        let access_token = self.oidc_client.get_access_token().await?;
+        // Build the request
+        let req = Request::builder()
+            .method(Method::DELETE)
+            .uri(endpoint)
+            .header(
+                AUTHORIZATION_HEADER,
+                format!("{} {}", AUTHORIZATION_BEARER_TOKEN, access_token),
+            )
+            .body(Body::empty())
+            .expect("unable to build request");
+
+        // Send the request and await the response.
+        let mut resp = self.http_client.request(req).await?;
+        // Check if this was successful.
+        match resp.status() {
+            StatusCode::NO_CONTENT => Ok(()),
             _ => {
                 // Oh-oh, something went wrong, log the response body and throw the exception.
                 println!("{:?}", resp);

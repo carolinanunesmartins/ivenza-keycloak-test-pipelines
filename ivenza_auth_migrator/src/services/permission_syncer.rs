@@ -119,6 +119,15 @@ impl PermissionSyncer {
                 .map(|kc| kc.id)
                 .collect::<Vec<Uuid>>();
 
+            if let Some(conflict_permission) = keycloak_permissions
+                .iter()
+                .find(|item| item.name.eq(missing_permission.0))
+            {
+                println!("Deleting conflict permissin '{}'", conflict_permission.name);
+                keycloak_client
+                    .delete_permission(&conflict_permission.id)
+                    .await?;
+            }
             println!(
                 "Inserting permission '{}' for {} roles and {} scopes into keycloak",
                 missing_permission.0,
@@ -177,8 +186,7 @@ impl PermissionSyncer {
                             ipm.1.scopes.iter().all(|ipms| kp.associated_scopes.is_some() &&
                                 kp.associated_scopes.as_ref().unwrap().iter().any(|ass| ass.name.to_lowercase().eq(&ipms.to_lowercase())))
                     )
-            )
-                .collect();
+            ).collect();
         missing_permissions
     }
 
