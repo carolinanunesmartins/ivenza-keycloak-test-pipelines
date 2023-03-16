@@ -7,6 +7,7 @@ use uuid::Uuid;
 pub struct RoleResponse {
     pub id: Uuid,
     pub name: String,
+    #[serde(default)]
     pub description: String,
     pub composite: bool,
     #[serde(rename = "clientRole")]
@@ -174,6 +175,7 @@ impl PolicyRoles {
 pub struct PolicyResponse {
     pub id: Uuid,
     pub name: String,
+    #[serde(default)]
     pub description: String,
     #[serde(rename = "type")]
     pub r#type: String,
@@ -306,6 +308,7 @@ impl CreateResourceRequest {
 pub struct PermissionResponse {
     pub id: Uuid,
     pub name: String,
+    #[serde(default)]
     pub description: String,
     #[serde(rename = "type")]
     pub r#type: PermissionType,
