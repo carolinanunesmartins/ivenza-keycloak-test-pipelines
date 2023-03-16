@@ -21,9 +21,9 @@ pub struct UserResponse {
     pub id: Uuid,
     #[serde(rename = "username")]
     pub user_name: String,
-    #[serde(rename = "firstName")]
+    #[serde(rename = "firstName", default)]
     pub first_name: String,
-    #[serde(rename = "lastName")]
+    #[serde(rename = "lastName", default)]
     pub last_name: String,
 }
 
