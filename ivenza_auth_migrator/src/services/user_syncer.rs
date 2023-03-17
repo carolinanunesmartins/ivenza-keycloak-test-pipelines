@@ -1,3 +1,5 @@
+use crate::models::ivenza::User;
+
 use super::IvenzaClient;
 use super::KeycloakClient;
 use std::error::Error;
@@ -25,20 +27,29 @@ impl UserSyncer {
                 .collect();
         }
 
-        println!("Retrieved {} users", ivenza_users.len());
+        println!("Found {} unique users in Ivenza", ivenza_users.len());
         // Retrieve the known users from Keycloak.
         let mut keycloak_client = KeycloakClient::new();
         let keycloak_users = keycloak_client.get_users().await?;
+        println!("Found {} unique users in Keycloak", ivenza_users.len());
         let keycloak_roles = keycloak_client.get_roles().await?;
 
         // Check which users are not available in keycloak, but are available in Ivenza
-        let missing_users = ivenza_users.iter().filter(|&ir| {
-            !keycloak_users.iter().any(|kr| {
-                kr.user_name
-                    .to_lowercase()
-                    .eq(&ir.login_name.to_lowercase())
+        let missing_users = &ivenza_users
+            .iter()
+            .filter(|ir| {
+                !keycloak_users.iter().any(|kr| {
+                    kr.user_name
+                        .to_lowercase()
+                        .eq(&ir.login_name.to_lowercase())
+                })
             })
-        });
+            .collect::<Vec<&User>>();
+
+        println!(
+            "Found {} users present in both Ivenza and Keycloak",
+            &ivenza_users.len() - &missing_users.len()
+        );
         //
         // // Insert the missing user in Keycloak.
         for missing_user in missing_users {
