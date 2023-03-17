@@ -121,7 +121,7 @@ impl PermissionSyncer {
 
             if let Some(conflict_permission) = keycloak_permissions
                 .iter()
-                .find(|item| item.name.eq(missing_permission.0))
+                .find(|item| item.name.eq(&missing_permission.1.name))
             {
                 println!("Deleting conflict permissin '{}'", conflict_permission.name);
                 keycloak_client
@@ -139,7 +139,7 @@ impl PermissionSyncer {
             if let Some(res) = resource {
                 // create a new request to insert a permission into keycloak.
                 let permission = CreatePermissionRequest {
-                    name: missing_permission.0.to_string(),
+                    name: missing_permission.1.name.to_string(),
                     description: missing_permission.0.to_string(),
                     r#type: PermissionType::SCOPE,
                     logic: LogicType::POSITIVE,
@@ -229,6 +229,7 @@ impl PermissionSyncer {
         // Get the Hashmap entry based on the given key.
         // If it does not exist, construct a new one.
         let entry = result.entry(entry_key).or_insert(PermissionMap {
+            name: permission_group.0.to_string(),
             resource: resource.0.to_string(),
             scopes: resource.1.clone(),
             roles: allowed_roles.clone(),
@@ -291,11 +292,13 @@ struct PermissionMap {
     resource: String,
     scopes: Vec<String>,
     roles: Vec<String>,
+    name: String,
 }
 
 impl Clone for PermissionMap {
     fn clone(&self) -> Self {
         Self {
+            name: self.name.clone(),
             resource: self.resource.clone(),
             scopes: self.scopes.clone(),
             roles: self.roles.clone(),
