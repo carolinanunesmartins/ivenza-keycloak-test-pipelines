@@ -9,6 +9,7 @@ KEYCLOAK_ADMIN_USERNAME=[KEYCLOAK ADMIN USERNAME] # example: keycloak
 KEYCLOAK_ADMIN_PASSWORD=[KEYCLOAK ADMIN PASSWORD] # example: keycloak
 ADMIN_BASE_URL=[THE ADMIN BASE URL OF THE REALM WHERE THE CLIENT RESIDES WHERE YOU WANT TO SYNC THE PERMISSIONS] # example: http://keycloak:8080/admin/realms/delihome
 CLIENT_ID=[CLIENT ID OF THE CLIENT TO ADD THE PERMISSIONS TO] # example: 17873d79-f666-487a-ab9f-239fabbeb24d
+SKIP_INTERNAL_USERS=true/false # if set to true, users with uniconcreation.com and delihome.com e-mail addresses will not be imported into Keycloak.
 ```
 
 If this is done, you could simply run the [run-migrator.sh file](./run-migrator.sh). It will check whether an image was build for the migration tool. If not, a docker image will be build.
@@ -38,5 +39,6 @@ docker run --rm -it --network unicon-ivenza \
     -e KEYCLOAK_ADMIN_PASSWORD=keycloak \
     -e ADMIN_BASE_URL=http://keycloak:8080/admin/realms/delihome \
     -e CLIENT_ID=17873d79-f666-487a-ab9f-239fabbeb24d \
+    -e SKIP_INTERNAL_USERS=true\
     ivenza-auth-migrator:latest
 ```

@@ -7,6 +7,7 @@ mod schema;
 mod services;
 
 use dotenv::dotenv;
+use services::UserSyncer;
 
 use crate::services::{
     ImportValidator, PermissionSyncer, PolicySyncer, ResourceSyncer, RoleSyncer, ScopeSyncer,
@@ -21,6 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     PolicySyncer::sync().await?;
     ResourceSyncer::sync().await?;
     PermissionSyncer::sync().await?;
+    UserSyncer::sync().await?;
     ImportValidator::validate().await?;
     Ok(())
 }

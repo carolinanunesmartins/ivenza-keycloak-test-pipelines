@@ -7,6 +7,7 @@ mod policy_syncer;
 mod resource_syncer;
 mod role_syncer;
 mod scope_syncer;
+mod user_syncer;
 mod utility;
 
 use ivenza_client::IvenzaClient;
@@ -18,3 +19,5 @@ pub use policy_syncer::PolicySyncer;
 pub use resource_syncer::ResourceSyncer;
 pub use role_syncer::RoleSyncer;
 pub use scope_syncer::ScopeSyncer;
+pub use user_syncer::UserSyncer;
+

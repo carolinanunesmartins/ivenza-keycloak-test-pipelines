@@ -1,6 +1,7 @@
 use crate::data;
 use crate::models::ivenza::*;
 use crate::schema::UserRolePermissions::dsl::UserRolePermissions;
+use crate::schema::Users::dsl::Users;
 use crate::services::utility::PushUnique;
 use diesel::prelude::*;
 use regex::Regex;
@@ -32,6 +33,16 @@ impl IvenzaClient {
             })
             .collect::<Vec<Role>>();
         ivenza_roles
+    }
+
+    pub fn get_users() -> Vec<User> {
+        // Retrieve all known users from ivenza which don't have the delihome/uniconcreation e-mail
+        // address
+        let db_connection = &mut data::establish_connection();
+        let ivenza_users: Vec<User> = Users
+            .load::<User>(db_connection)
+            .expect("error loading users");
+        ivenza_users
     }
 
     /// Gets all permissions from Ivenza.

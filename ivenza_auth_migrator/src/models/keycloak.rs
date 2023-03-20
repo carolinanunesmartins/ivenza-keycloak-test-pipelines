@@ -1,17 +1,30 @@
+use super::ivenza::User;
 use serde::{Deserialize, Serialize};
+use std::vec;
 use uuid::Uuid;
 
 #[derive(Deserialize, Debug)]
-#[allow(dead_code)]
 pub struct RoleResponse {
     pub id: Uuid,
     pub name: String,
+    #[serde(default)]
     pub description: String,
     pub composite: bool,
     #[serde(rename = "clientRole")]
     pub client_role: bool,
     #[serde(rename = "containerId")]
     pub container_id: Uuid,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct UserResponse {
+    pub id: Uuid,
+    #[serde(rename = "username")]
+    pub user_name: String,
+    #[serde(rename = "firstName", default)]
+    pub first_name: String,
+    #[serde(rename = "lastName", default)]
+    pub last_name: String,
 }
 
 #[derive(Serialize, Debug)]
@@ -25,6 +38,90 @@ impl CreateRoleRequest {
         CreateRoleRequest {
             name: name.to_string(),
             description: description.to_string(),
+        }
+    }
+}
+
+#[derive(Serialize, Debug)]
+pub struct CreateUserRequest {
+    #[serde(rename = "username")]
+    pub user_name: String,
+    #[serde(rename = "firstName")]
+    pub first_name: String,
+    #[serde(rename = "lastName")]
+    pub last_name: String,
+    enabled: bool,
+    email: String,
+    #[serde(rename = "emailVerified")]
+    email_verified: bool,
+    credentials: Option<Vec<Credentials>>,
+    groups: Option<Vec<String>>,
+    attributes: Option<UserAttribute>,
+}
+
+#[derive(Serialize, Debug)]
+pub struct UserAttribute {
+    #[serde(rename = "ivenzaId")]
+    ivenza_id: Vec<String>,
+}
+
+#[derive(Serialize, Debug)]
+pub struct Credentials {
+    #[serde(rename = "type")]
+    pub credential_type: CredentialType,
+    pub value: String,
+    pub temporary: bool,
+}
+
+#[derive(Serialize, Debug)]
+pub enum CredentialType {
+    Password,
+    // What else?
+}
+
+impl From<&User> for CreateUserRequest {
+    fn from(user: &User) -> Self {
+        CreateUserRequest {
+            user_name: user.login_name.to_string(),
+            first_name: "".to_string(),
+            last_name: "".to_string(),
+            enabled: true,
+            email: user.email.to_string(),
+            email_verified: true,
+            groups: Some(vec![]),
+            attributes: Some(UserAttribute {
+                ivenza_id: vec![user.id.to_string()],
+            }),
+            credentials: Some(vec![Credentials {
+                credential_type: CredentialType::Password,
+                value: user.password.to_string(),
+                temporary: false,
+            }]),
+        }
+    }
+}
+
+#[derive(Serialize, Debug)]
+pub struct AssignRoleRequest {
+    pub id: Uuid,
+    pub name: String,
+    pub description: String,
+    pub composite: bool,
+    #[serde(rename = "clientRole")]
+    pub client_role: bool,
+    #[serde(rename = "containerId")]
+    pub container_id: Uuid,
+}
+
+impl From<&RoleResponse> for AssignRoleRequest {
+    fn from(role: &RoleResponse) -> Self {
+        AssignRoleRequest {
+            id: role.id,
+            name: role.name.to_string(),
+            description: role.description.to_string(),
+            composite: role.composite,
+            client_role: false,
+            container_id: role.container_id,
         }
     }
 }
@@ -78,6 +175,7 @@ impl PolicyRoles {
 pub struct PolicyResponse {
     pub id: Uuid,
     pub name: String,
+    #[serde(default)]
     pub description: String,
     #[serde(rename = "type")]
     pub r#type: String,
@@ -123,29 +221,6 @@ pub struct PolicyRole {
     pub required: bool,
 }
 
-/// Payload to create a role based policy into Keycloak.
-/// ```
-/// {
-///     "roles":[
-///         {
-///             "id":"9f4f8627-1af2-49ee-abf9-08a6adb1cace",
-///             "required":true
-///         }
-///     ],
-///     "name":"Has Manager Role",
-///     "description":"Has Manager Role",
-///     "logic":"POSITIVE"
-/// } {
-///     "roles":[
-///         {
-///             "id":"45960bab-2b9c-4066-99c3-72c9178e85ec",
-///             "required":true
-///         }],
-///     "name":"Has consumer role",
-///     "description":"Has consumer role",
-///     "logic":"POSITIVE"
-/// }
-/// ```
 #[derive(Serialize, Debug)]
 pub struct CreateRoleBasedPolicyRequest {
     pub roles: Vec<PolicyRole>,
@@ -233,6 +308,7 @@ impl CreateResourceRequest {
 pub struct PermissionResponse {
     pub id: Uuid,
     pub name: String,
+    #[serde(default)]
     pub description: String,
     #[serde(rename = "type")]
     pub r#type: PermissionType,
