@@ -130,7 +130,7 @@ impl PermissionSyncer {
             }
             println!(
                 "Inserting permission '{}' for {} roles and {} scopes into keycloak",
-                missing_permission.0,
+                missing_permission.1.name,
                 &policies.len(),
                 &scopes.len()
             );

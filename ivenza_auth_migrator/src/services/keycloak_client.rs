@@ -1,10 +1,9 @@
 use super::oidc_client::OidcClient;
-use crate::models::ivenza::{Role, User};
+use crate::models::ivenza::User;
 use crate::models::keycloak::*;
 use crate::services::utility;
 use hyper::client::HttpConnector;
 use hyper::{Body, Client, Method, Request, StatusCode};
-use regex::Match;
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::error::Error;
@@ -173,7 +172,7 @@ impl KeycloakClient {
         // construct the request.
         let request = CreateResourceRequest::new(resource_name, assigned_keycloak_scopes);
         // Post to keycloak.
-        self.http_post(resource_endpoint, &request).await;
+        _ = self.http_post(resource_endpoint, &request).await;
         Ok(())
     }
 
@@ -187,7 +186,7 @@ impl KeycloakClient {
         // construct the request.
         let request = CreateRoleRequest::new(name, description);
         // post to keycloak.
-        self.http_post(roles_endpoint, &request).await;
+        _ = self.http_post(roles_endpoint, &request).await;
         Ok(())
     }
 
@@ -238,7 +237,7 @@ impl KeycloakClient {
         // construct the request.
         let request = CreateRoleBasedPolicyRequest::new(&keycloak_role);
         // post to keycloak.
-        self.http_post(policy_endpoint, &request).await;
+        _ = self.http_post(policy_endpoint, &request).await;
         Ok(())
     }
 
@@ -252,7 +251,7 @@ impl KeycloakClient {
         // construct the request.
         let request = CreateScopeRequest::new(scope_name);
         // post to keycloak.
-        self.http_post(endpoint, &request).await;
+        _ = self.http_post(endpoint, &request).await;
         Ok(())
     }
 
@@ -267,7 +266,7 @@ impl KeycloakClient {
             self.admin_base_url, self.client_id
         );
         // post to keycloak
-        self.http_post(scopes_endpoint, &request).await;
+        _ = self.http_post(scopes_endpoint, &request).await;
         Ok(())
     }
 
@@ -278,7 +277,7 @@ impl KeycloakClient {
             self.admin_base_url, self.client_id, id
         );
         // post to keycloak
-        self.http_delete(delete_permission_endpoint).await;
+        _ = self.http_delete(delete_permission_endpoint).await;
         Ok(())
     }
 
