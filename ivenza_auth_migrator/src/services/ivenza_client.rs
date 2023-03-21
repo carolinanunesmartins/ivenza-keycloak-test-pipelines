@@ -37,10 +37,21 @@ impl IvenzaClient {
     pub fn get_permissions() -> Vec<Permission> {
         // Retrieve the known roles from Ivenza
         let db_connection = &mut data::establish_connection();
+        // get all the known roles, using the connection we just established
+        let roles: Vec<Role> = UserRoles
+            .load::<Role>(db_connection)
+            .expect("error loading role");
+        // get all the known permission, using the connection we just established
         let ivenza_permissions: Vec<Permission> = UserRolePermissions
             .load::<Permission>(db_connection)
             .expect("error loading permissions");
+        // filter out permissions for which no role exists.
+        // There is no hard foreign key constraint in the database
+        // So we can end up with permissions, that don't have a parent role in Ivenza
         ivenza_permissions
+            .into_iter()
+            .filter(|p| roles.iter().any(|r| p.role.eq(&r.name)))
+            .collect()
     }
 
     /// Determines all the possible scopes based on the permissions in Ivenza.
