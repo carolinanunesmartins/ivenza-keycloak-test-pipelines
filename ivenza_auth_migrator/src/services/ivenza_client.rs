@@ -1,6 +1,7 @@
 use crate::data;
 use crate::models::ivenza::*;
 use crate::schema::UserRolePermissions::dsl::UserRolePermissions;
+use crate::schema::UserRoles::dsl::UserRoles;
 use crate::schema::Users::dsl::Users;
 use crate::services::utility::PushUnique;
 use diesel::prelude::*;
@@ -15,23 +16,10 @@ impl IvenzaClient {
     /// Get's all the roles from Ivenza
     pub fn get_roles() -> Vec<Role> {
         // Retrieve the known roles from Ivenza
-        // let db_connection = &mut data::establish_connection();
-        // let ivenza_roles: Vec<Role> = UserRoles
-        //     .load::<Role>(db_connection)
-        //     .expect("error loading roles");
-        //  Get roles based on role column in permissions
-        let permissions = Self::get_permissions();
-        let ivenza_roles = permissions
-            .iter()
-            .map(|p| &p.role)
-            .fold(vec![], |mut result, capture| result.push_unique(&capture)) // fold all values into an array and push only unique values (distinct).
-            .iter()
-            .map(|r| Role {
-                id: 0,
-                name: r.to_string(),
-                display_name: r.to_string(),
-            })
-            .collect::<Vec<Role>>();
+        let db_connection = &mut data::establish_connection();
+        let ivenza_roles: Vec<Role> = UserRoles
+            .load::<Role>(db_connection)
+            .expect("error loading roles");
         ivenza_roles
     }
 
