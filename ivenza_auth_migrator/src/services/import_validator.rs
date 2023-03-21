@@ -3,6 +3,8 @@ use crate::services::ivenza_client::IvenzaClient;
 use crate::services::keycloak_client::KeycloakClient;
 use std::error::Error;
 
+use super::ROOT_LEVEL_SCOPE;
+
 pub struct ImportValidator;
 
 impl ImportValidator {
@@ -45,7 +47,7 @@ impl ImportValidator {
                         // also create a permission for each scope, assigned to this resource for
                         // thie role.
                         if let Some(scopes) = &permission.associated_scopes {
-                            for scope in scopes {
+                            for scope in scopes.iter().filter(|s| !s.name.eq(ROOT_LEVEL_SCOPE)) {
                                 let kc_permission = Permission {
                                     role: role_name.clone(),
                                     permission: format!("{}.{}", resource.name, scope.name),

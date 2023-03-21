@@ -21,3 +21,4 @@ pub use role_syncer::RoleSyncer;
 pub use scope_syncer::ScopeSyncer;
 pub use user_syncer::UserSyncer;
 
+const ROOT_LEVEL_SCOPE: &str = "root";

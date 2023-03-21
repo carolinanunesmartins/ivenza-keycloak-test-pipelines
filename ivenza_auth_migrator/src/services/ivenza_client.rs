@@ -8,6 +8,8 @@ use diesel::prelude::*;
 use regex::Regex;
 use std::collections::HashMap;
 
+use super::ROOT_LEVEL_SCOPE;
+
 const IVENZA_PERMISSION_REGEX: &str = r"(?m)(.+?)\.((?:edit\.|export.|collada.|reschedule.|search.|filters.|import.|details.mod|kmz.)?[^.]+)$";
 
 pub struct IvenzaClient;
@@ -60,7 +62,7 @@ impl IvenzaClient {
         let regex = Regex::new(IVENZA_PERMISSION_REGEX).unwrap();
 
         // extract resources from the ivenza permissions
-        let scopes = permissions
+        let mut scopes = permissions
             .iter() // iterator over all permissions.
             .filter(|&perm| perm.filter_scopes(&permissions)) // filter out some of the permissions that don't apply for a scope
             .map(|permission| regex.captures(permission.permission.as_str())) // perform a regex match
@@ -70,6 +72,7 @@ impl IvenzaClient {
             .fold(vec![], |mut result, capture| {
                 result.push_unique(&capture.to_lowercase())
             }); // fold all values into an array and push only unique values (distinct).
+        scopes.push_unique(ROOT_LEVEL_SCOPE);
         scopes
     }
 
