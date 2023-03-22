@@ -6,6 +6,7 @@ use crate::models::keycloak::{
     CreatePermissionRequest, DecisionStrategy, LogicType, PermissionResponse, PermissionType,
 };
 use crate::services::utility::{GroupBy, PushUnique};
+use crate::services::ROOT_LEVEL_SCOPE;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::error::Error;
@@ -91,7 +92,7 @@ impl PermissionSyncer {
 
             // Determine which scopes should be assigned to the newly constructed permission and
             // select their IDs
-            let scopes = keycloak_scopes
+            let mut scopes = keycloak_scopes
                 .iter()
                 .filter(|kc| {
                     missing_permission.1.scopes.contains(&kc.name)
@@ -102,6 +103,13 @@ impl PermissionSyncer {
                 })
                 .map(|kc| kc.id)
                 .collect::<Vec<Uuid>>();
+            if scopes.is_empty() {
+                if let Some(root_scope) =
+                    keycloak_scopes.iter().find(|r| r.name.eq(ROOT_LEVEL_SCOPE))
+                {
+                    scopes.push(root_scope.id);
+                }
+            }
 
             // Determine which policies should be assigned to the newly constructed permission and
             // select their IDs

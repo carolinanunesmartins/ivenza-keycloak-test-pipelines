@@ -1,6 +1,7 @@
 use super::IvenzaClient;
 use super::KeycloakClient;
 use crate::models::keycloak::ScopeResponse;
+use crate::services::ROOT_LEVEL_SCOPE;
 use std::error::Error;
 
 pub struct ResourceSyncer;
@@ -38,7 +39,7 @@ impl ResourceSyncer {
         // Iterate over the missing resources.
         for missing_resource in missing_resources {
             // Filter the scopes we want for this resource, based on the attached scopes in the ivenza resource.
-            let keycloak_scopes_for_resource = missing_resource
+            let mut keycloak_scopes_for_resource = missing_resource
                 .1
                 .iter()
                 .map(|ic| {
@@ -50,6 +51,9 @@ impl ResourceSyncer {
                 .map(|kp| kp.unwrap())
                 .collect::<Vec<&ScopeResponse>>();
 
+            if let Some(root_scope) = keycloak_scopes.iter().find(|r| r.name.eq(ROOT_LEVEL_SCOPE)) {
+                keycloak_scopes_for_resource.push(root_scope);
+            }
             // If we have missing scopes in keycloak, we should notify the runner of it.
             if keycloak_scopes_for_resource.len() < missing_resource.1.len() {
                 Self::print_missing_scopes_warning(&keycloak_scopes_for_resource, missing_resource);
