@@ -52,6 +52,13 @@ impl IvenzaClient {
         // So we can end up with permissions, that don't have a parent role in Ivenza
         ivenza_permissions
             .into_iter()
+            .map(|mut p| {
+                // We will only work with lowercase permissions, as keycloak doesn't like scopes
+                // having two similar values either export.XLS or export.xls. The last item will
+                // win.
+                p.permission = p.permission.to_lowercase();
+                p
+            })
             .filter(|p| roles.iter().any(|r| p.role.eq(&r.name)))
             .collect()
     }
@@ -68,10 +75,8 @@ impl IvenzaClient {
             .map(|permission| regex.captures(permission.permission.as_str())) // perform a regex match
             .filter(|capture| capture.is_some()) // filter successful matches
             .map(|capture| capture.unwrap()[2].to_string()) // get the second tuple value from the match, this contains the scope.
-            .filter(|scope| !scope.ends_with("Address")) // we don't want the address scopes
-            .fold(vec![], |mut result, capture| {
-                result.push_unique(&capture.to_lowercase())
-            }); // fold all values into an array and push only unique values (distinct).
+            .filter(|scope| !scope.ends_with("address")) // we don't want the address scopes
+            .fold(vec![], |mut result, capture| result.push_unique(&capture)); // fold all values into an array and push only unique values (distinct).
         scopes.push_unique(ROOT_LEVEL_SCOPE);
         scopes
     }

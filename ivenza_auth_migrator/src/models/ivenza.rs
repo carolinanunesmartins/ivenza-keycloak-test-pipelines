@@ -91,8 +91,8 @@ impl PermissionUtilities {
             .collect();
         match coupled_scopes.len() > 0 &&
             // there is a special treatment for measure preferences at semi root manage level, because there is also a measurePreferences scope for shop.personal.details.
-            resource_name != "manage.measurePreferences" &&
-            resource_name != "manage.productLines"
+            resource_name != "manage.measurepreferences" &&
+            resource_name != "manage.productlines"
         {
             true => {
                 let pat = format!(".{}", &coupled_scopes[0]);
