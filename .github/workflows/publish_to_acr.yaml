@@ -20,9 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Login to acr
-        run : |
-          docker login ${{env.ACR_URL}} -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
+      - name: Build Docker Image
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.ACR_URL }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
       - run: |
           echo ${{ env.GITHUB_REF }}
           IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/})
