@@ -21,11 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Login to acr
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.ACR_URL }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+        run : |
+          docker login ${{env.ACR_URL}} -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
       - run: |
           echo ${{ env.GITHUB_REF }}
           IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/})
