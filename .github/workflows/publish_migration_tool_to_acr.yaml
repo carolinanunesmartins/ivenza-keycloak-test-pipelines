@@ -1,0 +1,33 @@
+name: "Publish migration tool to ACR"
+
+env:
+  MICROSERVICE_NAME: auth_migrator
+  DOCKERFILE: ivenza_auth_migrator/Dockerfile
+  ACR_URL: uniconcreation.azurecr.io
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ivenza_auth_migrator/**
+      - .github/workflows/publish_migration_tool_to_acr.yaml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker Image
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.ACR_URL }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - run: |
+          echo ${{ env.GITHUB_REF }}
+          IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/})
+          IMAGE_TAG=${IMAGE_TAG//\//-}
+          docker build -f ${{ env.DOCKERFILE }} -t ${{ env.ACR_URL }}/${{ env.MICROSERVICE_NAME }}:$IMAGE_TAG .
+          docker push ${{ env.ACR_URL }}/${{ env.MICROSERVICE_NAME }}:$IMAGE_TAG
+
