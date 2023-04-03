@@ -4,7 +4,7 @@ table! {
         id -> Integer,
         name -> Text,
         #[sql_name = "displayName"]
-        display_name -> Text,
+        display_name -> Nullable<Text>,
     }
 }
 

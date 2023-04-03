@@ -25,7 +25,14 @@ impl RoleSyncer {
         for missing_role in missing_roles {
             println!("Inserting role {} into keycloak", missing_role.name);
             keycloak_client
-                .insert_role(&missing_role.name, &missing_role.display_name)
+                .insert_role(
+                    &missing_role.name,
+                    &missing_role
+                        .display_name
+                        .clone()
+                        .unwrap_or("not set".to_string())
+                        .as_str(),
+                )
                 .await?;
         }
         Ok(())

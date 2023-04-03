@@ -13,7 +13,7 @@ pub struct Permission {
 pub struct Role {
     pub id: i32,
     pub name: String,
-    pub display_name: String,
+    pub display_name: Option<String>,
 }
 
 #[derive(Queryable, Debug)]
