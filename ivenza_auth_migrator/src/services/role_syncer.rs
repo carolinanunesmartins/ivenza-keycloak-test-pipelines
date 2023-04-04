@@ -30,7 +30,7 @@ impl RoleSyncer {
                     &missing_role
                         .display_name
                         .clone()
-                        .unwrap_or("not set".to_string())
+                        .unwrap_or("".to_string())
                         .as_str(),
                 )
                 .await?;
