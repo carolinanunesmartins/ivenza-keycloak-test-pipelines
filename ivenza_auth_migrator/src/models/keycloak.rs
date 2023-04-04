@@ -63,6 +63,7 @@ pub struct CreateUserRequest {
 pub struct UserAttribute {
     #[serde(rename = "ivenzaId")]
     ivenza_id: Vec<String>,
+    domain: Vec<String>,
 }
 
 #[derive(Serialize, Debug)]
@@ -91,6 +92,7 @@ impl From<&User> for CreateUserRequest {
             groups: Some(vec![]),
             attributes: Some(UserAttribute {
                 ivenza_id: vec![user.id.to_string()],
+                domain: vec![user.domain.clone().unwrap_or("".to_string()).to_string()],
             }),
             credentials: Some(vec![Credentials {
                 credential_type: CredentialType::Password,

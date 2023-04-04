@@ -24,6 +24,7 @@ pub struct User {
     pub role: String,
     pub email: String,
     pub password: String,
+    pub domain: Option<String>,
 }
 // Compare trait implementations to compare permissions for equality.
 impl Eq for Permission {}

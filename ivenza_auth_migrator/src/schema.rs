@@ -25,5 +25,6 @@ table! {
         role -> Text,
         email -> Text,
         password -> Text,
+        domain -> Nullable<Text>,
     }
 }
