@@ -258,40 +258,29 @@ impl PermissionSyncer {
         resource: (&str, Vec<String>),
     ) -> String {
         let scope = match resource.1.first() {
-            Some(scope) => scope,
-            None => "",
+            Some(scope) => scope.replace("export.", "").to_string(),
+            None => "".to_string(),
         };
+        let resource_name = resource.0.replace("manage.", "");
+
         // top level resources
         if scope.is_empty() {
             return match resource.0.contains("manage.") {
-                true => format!("Can manage {}", resource.0.replace("manage.", "")),
+                true => format!("Can manage {resource_name}"),
                 false => resource.0.to_string(),
             };
         }
-
-        let name = match permission_group.0.contains("export.") {
-            // The permission is an export permission.
-            true => format!(
-                "Can export {} to {}",
-                resource.0.replace("manage.", ""),
-                scope.replace("export.", "")
-            ),
-            _ => match STANDALONE_SCOPES.contains(&scope) {
-                // This is a stand alone scope, can be resolved to Can edit, can delete, can
-                // recreate, etc....
-                true => format!("Can {} {}", scope, resource.0.replace("manage.", "")),
-                false => {
-                    // otherwise, we can't determine something beautifull, so keep at can manage
-                    // [SCOPE] on [RESOURCE].
-                    return format!(
-                        "Can manage {} on {}",
-                        scope,
-                        resource.0.replace("manage.", "")
-                    );
-                }
-            },
-        };
-        name
+        if permission_group.0.contains("export.") {
+            return format!("Can export {resource_name} to {scope}");
+        }
+        match STANDALONE_SCOPES.contains(&scope.as_str()) {
+            // This is a stand alone scope, can be resolved to Can edit, can delete, can
+            // recreate, etc....
+            true => format!("Can {resource_name} {scope}"),
+            // otherwise, we can't determine something beautifull, so keep at can manage
+            // [SCOPE] on [RESOURCE].
+            false => format!("Can manage {scope} on {resource_name}"),
+        }
     }
 }
 
