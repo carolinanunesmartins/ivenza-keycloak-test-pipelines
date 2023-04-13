@@ -33,10 +33,10 @@
     "registrationEmailAsUsername": false,
     "rememberMe": false,
     "verifyEmail": false,
-    "loginWithEmailAllowed": true,
-    "duplicateEmailsAllowed": false,
-    "resetPasswordAllowed": false,
-    "editUsernameAllowed": false,
+    "loginWithEmailAllowed": false,
+    "duplicateEmailsAllowed": true,
+    "resetPasswordAllowed": true,
+    "editUsernameAllowed": true,
     "bruteForceProtected": false,
     "permanentLockout": false,
     "maxFailureWaitSeconds": 900,
@@ -1476,7 +1476,18 @@
         "xXSSProtection": "1; mode=block",
         "strictTransportSecurity": "max-age=31536000; includeSubDomains"
     },
-    "smtpServer": {},
+    "smtpServer": {
+        "replyToDisplayName": "",
+        "starttls": "false",
+        "auth": "false",
+        "port": "25",
+        "host": "smtp-relay",
+        "replyTo": "",
+        "from": "svc_ivenza_mail@uniconcreation.com",
+        "fromDisplayName": "Unicon Creation",
+        "envelopeFrom": "",
+        "ssl": "false"
+    },
     "eventsEnabled": false,
     "eventsListeners": [
         "jboss-logging"
