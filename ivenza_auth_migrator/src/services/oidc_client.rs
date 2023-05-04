@@ -2,6 +2,7 @@ use crate::services::utility;
 use hyper::{Client, Method, Request, StatusCode};
 use serde::Deserialize;
 use std::env;
+use urlencoding::encode;
 
 const AUTHORITY_KEY: &str = "AUTHORITY";
 const KEYCLOAK_CLIENT_ID_KEY: &str = "KEYCLOAK_CLIENT_ID";
@@ -54,7 +55,10 @@ impl OidcClient {
         // construct the form data for the request
         let request_body = format!(
             "grant_type={}&client_id={}&username={}&password={}",
-            PASSWORD_GRANT_TYPE, self.client_id, self.username, self.password
+            PASSWORD_GRANT_TYPE,
+            self.client_id,
+            self.username,
+            encode(&self.password)
         );
 
         // Build the request

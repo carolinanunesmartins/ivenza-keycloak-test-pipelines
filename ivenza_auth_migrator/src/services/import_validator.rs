@@ -45,14 +45,14 @@ impl ImportValidator {
                         }
 
                         // also create a permission for each scope, assigned to this resource for
-                        // thie role.
+                        // the role.
                         if let Some(scopes) = &permission.associated_scopes {
                             for scope in scopes.iter().filter(|s| !s.name.eq(ROOT_LEVEL_SCOPE)) {
                                 let kc_permission = Permission {
                                     role: role_name.clone(),
                                     permission: format!("{}.{}", resource.name, scope.name),
                                 };
-                                // unique push for the flattened permission list.
+                                // unique push for the flattened permission list.
                                 if !flat_permission_results.iter().any(|p| p.eq(&kc_permission)) {
                                     flat_permission_results.push(kc_permission)
                                 }
@@ -92,7 +92,7 @@ impl ImportValidator {
             println!("\x1b[32m✔\x1b[0m All permissions found");
         }
 
-        // Check that we didn´t add too many permissions to keycloak.
+        // Check that we didn't add too many permissions to keycloak.
         // Note, this might not always be invalid, as de demo database in Ivenza also appears to
         // have invalid configurations. We should at least validate these manually.
         if &source_permissions.len() < &flat_permission_results.len() {
