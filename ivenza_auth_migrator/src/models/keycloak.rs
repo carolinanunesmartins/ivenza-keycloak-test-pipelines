@@ -94,11 +94,14 @@ impl From<&User> for CreateUserRequest {
                 ivenza_id: vec![user.id.to_string()],
                 domain: vec![user.domain.clone().unwrap_or("".to_string()).to_string()],
             }),
-            credentials: Some(vec![Credentials {
-                credential_type: CredentialType::Password,
-                value: user.password.to_string(),
-                temporary: false,
-            }]),
+            credentials: match &user.password {
+                None => None,
+                Some(password) => Some(vec![Credentials {
+                    credential_type: CredentialType::Password,
+                    value: password.to_string(),
+                    temporary: false,
+                }]),
+            },
         }
     }
 }

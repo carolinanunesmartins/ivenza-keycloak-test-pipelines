@@ -23,7 +23,7 @@ pub struct User {
     pub login_name: String,
     pub role: String,
     pub email: String,
-    pub password: String,
+    pub password: Option<String>,
     pub domain: Option<String>,
 }
 // Compare trait implementations to compare permissions for equality.

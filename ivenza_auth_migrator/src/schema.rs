@@ -24,7 +24,7 @@ table! {
         login_name -> Text,
         role -> Text,
         email -> Text,
-        password -> Text,
+        password -> Nullable<Text>,
         domain -> Nullable<Text>,
     }
 }
