@@ -9,4 +9,4 @@ else
     echo "Docker image already found"
 fi
 
-docker run --rm --network unicon-ivenza --env-file .env ivenza-auth-migrator:latest
+docker run --rm --network host --env-file .env ivenza-auth-migrator:latest
