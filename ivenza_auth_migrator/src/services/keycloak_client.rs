@@ -311,6 +311,7 @@ impl KeycloakClient {
                 Ok(utility::deserialize(&mut resp).await?)
             }
             _ => {
+                println!("{:?}", resp);
                 // Oh-oh, something went wrong, log the response body and throw the exception.
                 let _ = utility::print_response_body(&mut resp).await;
                 panic!("Unable to retrieve items from Keycloak")
