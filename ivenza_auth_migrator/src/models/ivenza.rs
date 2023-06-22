@@ -22,7 +22,7 @@ pub struct User {
     pub id: i32,
     pub login_name: String,
     pub role: String,
-    pub email: String,
+    pub email: Option<String>,
     pub password: Option<String>,
     pub domain: Option<String>,
     pub state: String,

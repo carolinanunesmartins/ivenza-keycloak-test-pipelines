@@ -87,8 +87,8 @@ impl From<&User> for CreateUserRequest {
             first_name: "".to_string(),
             last_name: "".to_string(),
             enabled: true,
-            email: user.email.to_string(),
-            email_verified: true,
+            email: user.email.clone().unwrap_or("".to_string()),
+            email_verified: user.email.is_some(),
             groups: Some(vec![]),
             attributes: Some(UserAttribute {
                 ivenza_id: vec![user.id.to_string()],

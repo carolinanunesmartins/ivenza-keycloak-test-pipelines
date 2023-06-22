@@ -23,7 +23,7 @@ table! {
         #[sql_name = "loginName"]
         login_name -> Text,
         role -> Text,
-        email -> Text,
+        email -> Nullable<Text>,
         password -> Nullable<Text>,
         domain -> Nullable<Text>,
         state -> Text,

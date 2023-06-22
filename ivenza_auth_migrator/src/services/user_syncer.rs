@@ -22,7 +22,15 @@ impl UserSyncer {
             ivenza_users = ivenza_users
                 .into_iter()
                 .filter(|u| {
-                    !u.email.contains("@uniconcreation.com") && !u.email.contains("@delihome.com")
+                    !u.email
+                        .clone()
+                        .unwrap_or_default()
+                        .contains("@uniconcreation.com")
+                        && !u
+                            .email
+                            .clone()
+                            .unwrap_or_default()
+                            .contains("@delihome.com")
                 })
                 .collect();
         }
