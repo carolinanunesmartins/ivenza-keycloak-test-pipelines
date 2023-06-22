@@ -34,7 +34,7 @@ impl IvenzaClient {
             .expect("error loading users");
         ivenza_users
             .into_iter()
-            .filter(|u| !u.state.eq("ACTIVE"))
+            .filter(|u| u.state.eq("ACTIVE"))
             .collect()
     }
 
