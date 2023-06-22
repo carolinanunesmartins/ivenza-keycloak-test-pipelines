@@ -58,7 +58,7 @@ impl KeycloakClient {
     /// Gets all the realm roles from Keycloak.
     pub async fn get_users(&mut self) -> Result<Vec<UserResponse>, Box<dyn Error>> {
         // construct the roles endpoint url.
-        let roles_endpoint = format!("{}{}", self.admin_base_url, USERS_PATH);
+        let roles_endpoint = format!("{}{}?max=10000", self.admin_base_url, USERS_PATH);
         return self.http_get(roles_endpoint).await;
     }
 
