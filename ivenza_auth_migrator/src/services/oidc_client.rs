@@ -84,7 +84,8 @@ impl OidcClient {
                 Ok(self.access_token.as_ref().unwrap())
             }
             _ => {
-                // Oh-oh, something went wrong, log the response body and throw the exception.
+                // Oh-oh, something went wrong, log the response body and throw the exception.k
+                println!("Got responsecode: {}", resp.status());
                 let _ = utility::print_response_body(&mut resp).await;
                 panic!("Did not get a valid token from the OIDC client")
             }
