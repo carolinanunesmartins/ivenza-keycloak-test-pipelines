@@ -33,6 +33,9 @@ impl IvenzaClient {
             .load::<User>(db_connection)
             .expect("error loading users");
         ivenza_users
+            .into_iter()
+            .filter(|u| !u.state.eq("ACTIVE"))
+            .collect()
     }
 
     /// Gets all permissions from Ivenza.
