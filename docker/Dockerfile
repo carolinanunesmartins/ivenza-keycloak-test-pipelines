@@ -6,6 +6,15 @@ FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
 COPY ./themes/ivenza /opt/keycloak/themes/ivenza
 COPY ./config/delihome-realm.json /opt/keycloak/data/import/delihome-realm.json
 
+# Temporary
+# Azure only supports SHA1 for mysql flexible server, which is no longer support with the latest JDK, unless permitted.
+# We'll allow it for now, but we should remove this, once Microsoft updates it's policy.
+# https://learn.microsoft.com/en-us/answers/questions/1199915/certificates-do-not-conform-to-algorithm
+# https://github.com/keycloak/keycloak/issues/17320
+USER root
+RUN ["sed", "-i", "s/SHA1, //g", "/usr/share/crypto-policies/DEFAULT/java.txt"]
+USER 1000
+
 # We want to access keycloak using the /auth context
 # https://www.keycloak.org/migration/migrating-to-quarkus
 # By default, the new Quarkus distribution removes /auth from the context-path. To re-introduce the /auth use the http-relative-path build option. For example:
