@@ -1,14 +1,13 @@
-use diesel::mysql::MysqlConnection;
-use diesel::prelude::*;
+use sqlx::{mysql::MySqlPoolOptions, MySqlPool};
 use std::env;
 
 const DATABASE_URL_KEY: &str = "DATABASE_URL";
 
-pub fn establish_connection() -> MysqlConnection {
+pub async fn establish_connection() -> MySqlPool {
     // Get the database url from environment variables.
     let database_url = env::var(DATABASE_URL_KEY).expect("Database URL not set.");
-
-    // Create a new MySqlConnection (maria db is compatible). If this fails, print an error message.
-    MysqlConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
+    let pool = MySqlPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url).await.expect(&format!("Error connecting to {}", database_url));
+    pool
 }

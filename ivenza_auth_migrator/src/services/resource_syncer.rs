@@ -10,12 +10,12 @@ impl ResourceSyncer {
     /// Determines which resources should be extracted from the ivenza permissions
     /// Validates which resources are already available within keycloak
     /// and inserts missing resources into keycloak.
-    pub async fn sync() -> Result<(), Box<dyn Error>> {
+    pub async fn sync(ivenza_client: &IvenzaClient) -> Result<(), Box<dyn Error>> {
         // Get all the scopes from ivenza
-        let scopes = IvenzaClient::determine_scopes();
+        let scopes = ivenza_client.determine_scopes().await;
 
         // Get all permissions from ivenza.
-        let permissions = IvenzaClient::get_permissions();
+        let permissions = ivenza_client.get_permissions().await;
 
         // Determine which resource we're expecting to be present in keycloak.
         let ivenza_resources = IvenzaClient::determine_resources(&permissions, &scopes);

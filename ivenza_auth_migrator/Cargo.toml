@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-diesel = { version = "2.1.0", features = ["mysql"] }
+sqlx = { version = "0.7.3", features = ["mysql", "runtime-tokio", "tls-rustls"] }
 dotenv = "0.15"
 hyper = { version = "0.14", features = ["full"] }
 tokio = { version = "1", features = ["full"] }

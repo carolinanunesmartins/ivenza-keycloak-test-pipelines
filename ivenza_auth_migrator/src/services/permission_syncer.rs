@@ -29,12 +29,12 @@ impl PermissionSyncer {
     /// in Ivenza.
     /// For each permission is determined which role is granted certain scopes to a particular
     /// resource.
-    pub async fn sync() -> Result<(), Box<dyn Error>> {
+    pub async fn sync(ivenza_client: &IvenzaClient) -> Result<(), Box<dyn Error>> {
         // Get all the permissions from Ivenza, this is our source of truth.
-        let ivenza_permissions: Vec<Permission> = IvenzaClient::get_permissions();
+        let ivenza_permissions = ivenza_client.get_permissions().await;
 
         // Determine all the posible scopes from Ivenza.
-        let scopes = IvenzaClient::determine_scopes();
+        let scopes = ivenza_client.determine_scopes().await;
 
         // Construct mapping from Ivenza permissions to permissions in keycloak.
         // A permission in keycloak is typically represented by a name (human readable), a

@@ -6,9 +6,9 @@ pub struct RoleSyncer;
 
 impl RoleSyncer {
     /// Synchronizes roles from Ivenza to keycloak.
-    pub async fn sync() -> Result<(), Box<dyn Error>> {
+    pub async fn sync(ivenza_client: &IvenzaClient) -> Result<(), Box<dyn Error>> {
         // Get all the known roles in ivenza.
-        let ivenza_roles = IvenzaClient::get_roles();
+        let ivenza_roles = ivenza_client.get_roles().await;
 
         // Retrieve the known roles from Keycloak.
         let mut keycloak_client = KeycloakClient::new();

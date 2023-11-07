@@ -7,8 +7,8 @@ pub struct ScopeSyncer;
 impl ScopeSyncer {
     /// Determines which scopes are expected to be in keycloak based on Ivenza configuration.
     /// If there are scopes missing from Ivenza, this function will insert them into keycloak.
-    pub async fn sync() -> Result<(), Box<dyn Error>> {
-        let ivenza_scopes = IvenzaClient::determine_scopes();
+    pub async fn sync(ivenza_client: &IvenzaClient) -> Result<(), Box<dyn Error>> {
+        let ivenza_scopes = ivenza_client.determine_scopes().await;
         let mut keycloak_client = KeycloakClient::new();
         let keycloak_scopes = keycloak_client.get_scopes().await?;
         let missing_scopes = ivenza_scopes.iter().filter(|&is| {

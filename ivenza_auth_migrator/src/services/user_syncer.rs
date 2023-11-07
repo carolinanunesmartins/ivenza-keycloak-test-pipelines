@@ -11,13 +11,13 @@ const SKIP_INTERNAL_USERS_KEY: &str = "SKIP_INTERNAL_USERS";
 
 impl UserSyncer {
     /// Synchronizes users from Ivenza to keycloak.
-    pub async fn sync() -> Result<(), Box<dyn Error>> {
+    pub async fn sync(ivenza_client: &IvenzaClient) -> Result<(), Box<dyn Error>> {
         let skip_internal_users = env::var(SKIP_INTERNAL_USERS_KEY)
             .unwrap_or_default()
             .eq("true");
 
         // Get all the known users in ivenza.
-        let mut ivenza_users = IvenzaClient::get_users();
+        let mut ivenza_users = ivenza_client.get_users().await;
         if skip_internal_users {
             ivenza_users = ivenza_users
                 .into_iter()

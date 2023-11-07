@@ -1,10 +1,7 @@
 use crate::data;
 use crate::models::ivenza::*;
-use crate::schema::UserRolePermissions::dsl::UserRolePermissions;
-use crate::schema::UserRoles::dsl::UserRoles;
-use crate::schema::Users::dsl::Users;
+use sqlx::mysql::MySqlPool;
 use crate::services::utility::PushUnique;
-use diesel::prelude::*;
 use regex::Regex;
 use std::collections::HashMap;
 
@@ -12,44 +9,34 @@ use super::ROOT_LEVEL_SCOPE;
 
 const IVENZA_PERMISSION_REGEX: &str = r"(?m)(.+?)\.((?:edit\.|export.|collada.|reschedule.|search.|filters.|import.|details.mod|kmz.)?[^.]+)$";
 
-pub struct IvenzaClient;
+pub struct IvenzaClient
+{
+    my_sql_pool: MySqlPool,
+}
 
 impl IvenzaClient {
-    /// Get's all the roles from Ivenza
-    pub fn get_roles() -> Vec<Role> {
-        // Retrieve the known roles from Ivenza
-        let db_connection = &mut data::establish_connection();
-        let ivenza_roles: Vec<Role> = UserRoles
-            .load::<Role>(db_connection)
-            .expect("error loading roles");
-        ivenza_roles
+
+    pub async fn new() -> Self {
+        let my_sql_pool = data::establish_connection().await;
+        Self {
+            my_sql_pool
+        }
     }
 
-    pub fn get_users() -> Vec<User> {
-        // Retrieve all known users from ivenza which don't have the delihome/uniconcreation e-mail
-        // address
-        let db_connection = &mut data::establish_connection();
-        let ivenza_users: Vec<User> = Users
-            .load::<User>(db_connection)
-            .expect("error loading users");
-        ivenza_users
-            .into_iter()
-            .filter(|u| !u.state.eq("DISABLED"))
-            .collect()
+    /// Get's all the roles from Ivenza
+    pub async fn get_roles(&self) -> Vec<Role> {
+        sqlx::query_as::<_, Role>("SELECT * FROM userRoles").fetch_all(&self.my_sql_pool).await.expect("error loading roles")
+    }
+
+    pub async fn get_users(&self) -> Vec<User> {
+        sqlx::query_as::<_, User>("SELECT * FROM users WHERE state != 'DISABLED'").fetch_all(&self.my_sql_pool).await.expect("error loading users")
     }
 
     /// Gets all permissions from Ivenza.
-    pub fn get_permissions() -> Vec<Permission> {
-        // Retrieve the known roles from Ivenza
-        let db_connection = &mut data::establish_connection();
-        // get all the known roles, using the connection we just established
-        let roles: Vec<Role> = UserRoles
-            .load::<Role>(db_connection)
-            .expect("error loading role");
+    pub async fn get_permissions(&self) -> Vec<Permission> {
+        let roles = self.get_roles().await;
         // get all the known permission, using the connection we just established
-        let ivenza_permissions: Vec<Permission> = UserRolePermissions
-            .load::<Permission>(db_connection)
-            .expect("error loading permissions");
+        let ivenza_permissions = sqlx::query_as::<_, Permission>("SELECT * FROM userRolePermissions").fetch_all(&self.my_sql_pool).await.expect("error loading permissions");
         // filter out permissions for which no role exists.
         // There is no hard foreign key constraint in the database
         // So we can end up with permissions, that don't have a parent role in Ivenza
@@ -67,8 +54,8 @@ impl IvenzaClient {
     }
 
     /// Determines all the possible scopes based on the permissions in Ivenza.
-    pub fn determine_scopes() -> Vec<String> {
-        let permissions = Self::get_permissions();
+    pub async fn determine_scopes(&self) -> Vec<String> {
+        let permissions = self.get_permissions().await;
         let regex = Regex::new(IVENZA_PERMISSION_REGEX).unwrap();
 
         // extract resources from the ivenza permissions

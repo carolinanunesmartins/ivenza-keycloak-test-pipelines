@@ -1,25 +1,26 @@
 use std::cmp::Ordering;
+use sqlx::FromRow;
 
 /// Structs representing tables within the Ivenza database.
-#[derive(Queryable, Debug, Clone)]
-#[diesel(table_name = UserRolePermissions)]
+#[derive(FromRow, Debug, Clone)]
 pub struct Permission {
     pub role: String,
     pub permission: String,
 }
 
-#[derive(Queryable, Debug)]
-#[diesel(table_name = UserRoles)]
+#[derive(FromRow, Debug)]
 pub struct Role {
     pub id: i32,
     pub name: String,
+    #[sqlx(rename = "displayName")]
     pub display_name: Option<String>,
 }
 
-#[derive(Queryable, Debug)]
-#[diesel(table_name = Users)]
+#[derive(Debug, FromRow)]
 pub struct User {
+    #[sqlx(rename = "ID")]
     pub id: i32,
+    #[sqlx(rename = "loginName")]
     pub login_name: String,
     pub role: String,
     pub email: Option<String>,

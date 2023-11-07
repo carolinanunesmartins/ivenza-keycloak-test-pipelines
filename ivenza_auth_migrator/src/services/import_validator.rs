@@ -9,9 +9,9 @@ pub struct ImportValidator;
 
 impl ImportValidator {
     /// Validates that all permissions from Ivenza can be constructed from permissions in Keycloak
-    pub async fn validate() -> Result<(), Box<dyn Error>> {
+    pub async fn validate(ivenza_client: &IvenzaClient) -> Result<(), Box<dyn Error>> {
         // get all permissions from ivenza
-        let source_permissions: Vec<Permission> = IvenzaClient::get_permissions();
+        let source_permissions: Vec<Permission> = ivenza_client.get_permissions().await;
 
         // construct the keycloak client
         let mut keycloak_client = KeycloakClient::new();

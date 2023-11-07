@@ -10,10 +10,10 @@ mod scope_syncer;
 mod user_syncer;
 mod utility;
 
-use ivenza_client::IvenzaClient;
 use keycloak_client::KeycloakClient;
 
 pub use import_validator::ImportValidator;
+pub use ivenza_client::IvenzaClient;
 pub use permission_syncer::PermissionSyncer;
 pub use policy_syncer::PolicySyncer;
 pub use resource_syncer::ResourceSyncer;

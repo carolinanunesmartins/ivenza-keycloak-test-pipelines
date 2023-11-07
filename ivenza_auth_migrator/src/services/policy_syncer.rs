@@ -6,9 +6,9 @@ pub struct PolicySyncer;
 
 impl PolicySyncer {
     /// Creates keycloak role based policies for every role defined in ivenza.
-    pub async fn sync() -> Result<(), Box<dyn Error>> {
+    pub async fn sync(ivenza_client: &IvenzaClient) -> Result<(), Box<dyn Error>> {
         // Get all the roles from ivena.
-        let ivenza_roles = IvenzaClient::get_roles();
+        let ivenza_roles = ivenza_client.get_roles().await;
 
         // construct the keycloak client
         let mut keycloak_client = KeycloakClient::new();
