@@ -4,6 +4,7 @@ ARG KEYCLOAK_VERSION=21.0
 FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
 
 COPY ./themes/ivenza /opt/keycloak/themes/ivenza
+COPY ./themes/skantrae /opt/keycloak/themes/skantrae
 COPY ./config/delihome-realm.json /opt/keycloak/data/import/delihome-realm.json
 
 # Temporary

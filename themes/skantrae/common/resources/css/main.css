@@ -1,0 +1,33 @@
+/* classes for the fonts */
+@font-face {
+    font-family: 'Roihu-Medium' !important;
+    src: url('../fonts/2D0EB0_8_0.eot');
+    src: url('../fonts/2D0EB0_8_0.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/2D0EB0_8_0.woff2') format('woff2'), url('../fonts/2D0EB0_8_0.woff') format('woff'),
+        url('../fonts/2D0EB0_8_0.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roihu-Bold' !important;
+    src: url('../fonts/2D0EB0_B_0.eot');
+    src: url('../fonts/2D0EB0_B_0.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/2D0EB0_B_0.woff2') format('woff2'), url('../fonts/2D0EB0_B_0.woff') format('woff'),
+        url('../fonts/2D0EB0_B_0.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roihu-Regular' !important;
+    src: url('../fonts/2D0EB0_9_0.eot');
+    src: url('../fonts/2D0EB0_9_0.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/2D0EB0_9_0.woff2') format('woff2'), url('../fonts/2D0EB0_9_0.woff') format('woff'),
+        url('../fonts/2D0EB0_9_0.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

@@ -4,6 +4,11 @@ networks:
     external: true
     name: unicon-ivenza
 services:
+  # for local testing e-mails from keycloak
+  # set the smtp host as 'smtp' for the keycloak theme
+  smtp:
+    image: docker.io/namshi/smtp:latest
+
   keycloakdb:
     image: mariadb:10.3
     restart: always
