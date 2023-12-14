@@ -17,8 +17,7 @@ RUN cd /tmp && \
     mkdir /dpkg && \
     for deb in *.deb; do dpkg --extract $deb /dpkg || exit 10; done
 
-# use a distroless/cc image as base to run the dynamically linked rust application in
-# use Ubuntu 20.04 as base to extract the needed libraries from
-FROM ubuntu:latest
+# use Ubuntu 20.04 as the runtime image
+FROM ubuntu:latest as runtime
 COPY --from=builder /source/target/release/ivenza_auth_migrator /
 CMD ["./ivenza_auth_migrator"]
