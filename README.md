@@ -77,3 +77,36 @@ The Keycloak realms are build up as followed.
   around 650MB of memory is added to the cluster workload. If we have 9
   instances of Keycloak running, this would add up to 5.85 GB of memory, which
   is quite a lot.
+
+## Setup Microsoft as an external IDP
+You can use Microsoft Active Directory as an external Identify Provider. To do
+so, you will need to configure the Identify provider accordingly:
+
+* Create a new OIDC Identity Provider (Do not use Microsoft, as we are connecting with a specific tennant)
+  ![image](https://github.com/Unicon-Creation/ivenza-keycloak/assets/35781348/8184f397-8453-472d-ae18-28f49562f332)
+* Make sure to set the following settings:
+  ![image](https://github.com/Unicon-Creation/ivenza-keycloak/assets/35781348/159e7e11-2186-431d-8218-d19ab6899869)
+  * Replace the obfuscated UUID of the Authorization URL and Token URL, with the TenantID, provided by Delihome IT.
+    * https://login.microsoftonline.com/[TENANT_ID]/oauth2/v2.0/authorize
+    * https://login.microsoftonline.com/[TENANT_ID]/oauth2/v2.0/token
+  * Replace the obfuscated UUID of the Client ID with the ClientId, provided by Delihome IT
+  * Replace the obfuscated Client Secret with the ClientSercret, provided by Delihome IT
+  * Make sure the redirect URL is also registered at the Azure AD client, by Delihome IT (case sensitive)
+    * http(s)://[BASE_URL]/realms/[REALM]/broker/[PROVIDER_ALIAS]/endpoint
+* Under 'advanced', make sure to set the following scopes. These allow us to read user information (firstname, lastname, email and username) from Azure AD
+  * scopes: `openid profile email`
+    * ![image](https://github.com/Unicon-Creation/ivenza-keycloak/assets/35781348/19758d00-cf45-4c4d-b5cd-0effb70e4e8a)
+
+
+
+* To make sure the user information from Azure Active Directory is automatically assigned to a new user account, go to `Mappers`.
+  *  Create 4 mappings like so:
+![image](https://github.com/Unicon-Creation/ivenza-keycloak/assets/35781348/aa1a50aa-75f1-4378-bd5e-8cee1d0a351d)
+    *  Firstname from ADD > claim: given_name, attribute: firstName
+    *  LastName from ADD > claim: family_name, attribute: lastName
+    *  UserName from ADD > claim: name, attribute: username
+    *  Email from ADD > claim unique_name, attribute: email
+
+If a new user logs in now via Azure AD, all it's information will be available within keycloak automatically
+
+
