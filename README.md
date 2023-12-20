@@ -93,19 +93,30 @@ so, you will need to configure the Identify provider accordingly:
   * Replace the obfuscated Client Secret with the ClientSercret, provided by Delihome IT
   * Make sure the redirect URL is also registered at the Azure AD client, by Delihome IT (case sensitive)
     * http(s)://[BASE_URL]/realms/[REALM]/broker/[PROVIDER_ALIAS]/endpoint
-* Under 'advanced', make sure to set the following scopes. These allow us to read user information (firstname, lastname, email and username) from Azure AD
-  * scopes: `openid profile email`
-    * ![image](https://github.com/Unicon-Creation/ivenza-keycloak/assets/35781348/19758d00-cf45-4c4d-b5cd-0effb70e4e8a)
 
+### Automatic profile property linking
+Under 'advanced', make sure to set the following scopes: `openid profile email`. These allow us to read user information (firstname, lastname, email and username) from Azure AD, and bind them automatically to the Keycloak User profile.
 
+![image](https://github.com/Unicon-Creation/ivenza-keycloak/assets/35781348/19758d00-cf45-4c4d-b5cd-0effb70e4e8a)
 
-* To make sure the user information from Azure Active Directory is automatically assigned to a new user account, go to `Mappers`.
-  *  Create 4 mappings like so:
-![image](https://github.com/Unicon-Creation/ivenza-keycloak/assets/35781348/aa1a50aa-75f1-4378-bd5e-8cee1d0a351d)
-    *  Firstname from ADD > claim: given_name, attribute: firstName
-    *  LastName from ADD > claim: family_name, attribute: lastName
-    *  UserName from ADD > claim: name, attribute: username
-    *  Email from ADD > claim unique_name, attribute: email
+### Automatic role mappings
+Depending on the organization the user belongs to, we want to assign a particular role to users, logging in with their Microsoft account. If a user belongs to the Unicon Creation organization, it should be granted the `developer` role. For other users with an @deli-home.com address, they should be granted a `consumer` role to have some basic login features.
+
+Navigate to `Identity providers > Microsoft > Mappers` and create the following two mappings:
+* Uniconcreation users to developer role
+  * Mapper type : `Advanced Claim to Role`
+  * Claim key : `email`
+  * Claim value : `.*@uniconcreation\.com`
+  * Regex Claim Values : `On`
+  * Role : `developer`
+* Delihome users to base role
+  * Mapper type : `Advanced Claim to Role`
+  * Claim key : `email`
+  * Claim value : `.*@deli-home\.com`
+  * Regex Claim Values : `On`
+  * Role : `consumer`
+
+![image](https://github.com/Unicon-Creation/ivenza-keycloak/assets/35781348/398b73d7-de6a-4e57-a68e-adb22c79c920)
 
 If a new user logs in now via Azure AD, all it's information will be available within keycloak automatically
 
