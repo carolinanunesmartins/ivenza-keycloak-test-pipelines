@@ -1,7 +1,7 @@
 <#import "./components/logo.ftl" as logo>
 <#import "./components/text.ftl" as text>
 
-<#macro registrationLayout displayMessage=true>
+<#macro registrationLayout displayMessage=true returnLink="https://expert.skantrae.com/">
     <!DOCTYPE html>
     <html class=""<#if realm.internationalizationEnabled> lang="${locale.currentLanguageTag}"</#if>>
         <head>
@@ -61,7 +61,7 @@
                 <div class="7xl:px-0 mx-auto flex w-full max-w-[1440px] flex-col items-stretch px-2.5 md:px-10 justify-center">
                     <div class="flex flex-row justify-between items-center">
                         <#--  header back link  -->
-                        <a href="https://expert.skantrae.com/" class="flex flex-row gap-4 items-center hover:text-white hover:no-underline">
+                        <a href="${returnLink}" class="flex flex-row gap-4 items-center hover:text-white hover:no-underline">
                             <span class="material-symbols-outlined">arrow_left_alt</span>
                             <@text.p>
                                 ${kcSanitize(msg("kcTemplateBack"))!"Terug"}

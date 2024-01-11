@@ -27,9 +27,9 @@
                 </div>
 
                 <#--  submit button  -->
-                <@button.secondaryButton type="submit">
+                <@button.primaryButton type="submit">
                     ${kcSanitize(msg("kcUpdatePassConfirm"))!"Confirm"}
-                </@button.secondaryButton>
+                </@button.primaryButton>
             </@card.card>
         </form>
         <#--  allow the password visibility to be toggled  -->
