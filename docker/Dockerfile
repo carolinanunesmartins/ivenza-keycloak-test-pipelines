@@ -24,4 +24,4 @@ USER 1000
 # https://groups.google.com/g/keycloak-user/c/wtCpDiFD70U
 # TL 13-3-2023 : Discussed with Peer not to use a relative path. If this is a requirement down the line, enable this relative path parameter
 # CMD ["start-dev","--http-relative-path /auth -Dkeycloak.import=/tmp/delihome-realm.json", "-Dkeycloak.migration.strategy=SKIP"]
-CMD ["start-dev","--import-realm"]
+# CMD ["start-dev","--import-realm"]
