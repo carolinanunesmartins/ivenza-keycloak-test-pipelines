@@ -19,7 +19,7 @@
             max-width: 750px;
             margin: 0 auto;
             background-color: #FFFFFF;
-            text-align: center;
+            text-align: left;
         }
         .logo {
             text-align: center;
