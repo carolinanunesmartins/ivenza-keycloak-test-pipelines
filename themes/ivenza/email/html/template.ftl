@@ -36,6 +36,7 @@
             background-color: #F8F8F8;
             color: #777777;
             font-size: 12px;
+            text-align: center;
         }
         .footer p {
             margin: 5px 0;
