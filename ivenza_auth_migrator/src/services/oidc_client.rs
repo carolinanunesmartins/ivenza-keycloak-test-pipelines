@@ -8,7 +8,6 @@ const KEYCLOAK_CLIENT_ID_KEY: &str = "KEYCLOAK_CLIENT_ID";
 const KEYCLOAK_ADMIN_USERNAME_KEY: &str = "KEYCLOAK_ADMIN_USERNAME";
 const KEYCLOAK_ADMIN_PASSWORD_KEY: &str = "KEYCLOAK_ADMIN_PASSWORD";
 const TOKEN_RELATIVE_PATH: &str = "/protocol/openid-connect/token";
-const CONTENT_TYPE_HEADER: &str = "content-type";
 const WWW_FORM_ENCODED_CONTENT_TYPE: &str = "application/x-www-form-urlencoded";
 const PASSWORD_GRANT_TYPE: &str = "password";
 
