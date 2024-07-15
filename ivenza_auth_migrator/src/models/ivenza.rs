@@ -33,7 +33,8 @@ impl Eq for Permission {}
 
 impl PartialEq<Self> for Permission {
     fn eq(&self, other: &Self) -> bool {
-        self.permission.eq(&other.permission) && self.role.eq(&other.role)
+        // we check case insensitive for the in ivenza for roles and permissions
+        self.permission.eq(&other.permission) && self.role.to_lowercase().eq(&other.role.to_lowercase())
     }
 }
 

@@ -79,6 +79,51 @@ impl KeycloakClient {
         return self.http_get(scopes_endpoint).await;
     }
 
+    pub async fn clear_authorization(&mut self) -> Result<(), Box<dyn Error>> {
+        
+        // clear permissions
+        let permissions = self.get_permissions().await?;
+        for permission in permissions {
+            self.http_delete(format!(
+                "{}/clients/{}/authz/resource-server/permission/{}",
+                self.admin_base_url, self.client_id, permission.id
+            ))
+            .await?;
+        }
+
+        // clear policies
+        let policies = self.get_policies().await?;
+        for policy in policies {
+            self.http_delete(format!(
+                "{}/clients/{}/authz/resource-server/policy/{}",
+                self.admin_base_url, self.client_id, policy.id
+            ))
+            .await?;
+        }
+
+        // clear resources
+        let resources = self.get_resources().await?;
+        for resource in resources {
+            self.http_delete(format!(
+                "{}/clients/{}/authz/resource-server/resource/{}",
+                self.admin_base_url, self.client_id, resource.id
+            ))
+            .await?;
+        }
+
+        // clear scopes
+        let scopes = self.get_scopes().await?;
+        for scope in scopes {
+            self.http_delete(format!(
+                "{}/clients/{}/authz/resource-server/scope/{}",
+                self.admin_base_url, self.client_id, scope.id
+            ))
+            .await?;
+        }
+
+        Ok(())
+    }
+
     /// Gets all permissions from Keycloak
     /// Note that getting the permissions also gets all underling related scopes, resources and
     /// policies assigned to this permission.
