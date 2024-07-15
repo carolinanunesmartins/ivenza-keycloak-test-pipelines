@@ -1,30 +1,4 @@
-use hyper::body::HttpBody;
-use hyper::{Body, Response};
-use serde::Deserialize;
 use std::collections::BTreeMap;
-use std::error::Error;
-use tokio::io::{stdout, AsyncWriteExt};
-
-/// Deserializes the body stream of the response to the given type.
-pub async fn deserialize<T>(resp: &mut Response<Body>) -> Result<T, Box<dyn Error>>
-where
-    for<'de> T: Deserialize<'de>,
-{
-    let mut data = vec![];
-    while let Some(chunk) = resp.body_mut().data().await {
-        data.extend(&chunk?);
-    }
-    let result: T = serde_json::from_slice(&data).expect("Unable to deserialize response");
-    Ok(result)
-}
-
-/// Reads the body stream of the response and prints this to the console.
-pub async fn print_response_body(resp: &mut Response<Body>) -> Result<(), Box<dyn Error>> {
-    while let Some(chunk) = resp.body_mut().data().await {
-        stdout().write_all(&chunk?).await?;
-    }
-    Ok(())
-}
 
 pub trait PushUnique {
     /// Checks if the given string slice if not already present in the given vector and pushes it

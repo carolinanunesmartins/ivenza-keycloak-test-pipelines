@@ -1,13 +1,11 @@
 use super::oidc_client::OidcClient;
 use crate::models::ivenza::User;
 use crate::models::keycloak::*;
-use crate::services::utility;
-use hyper::client::HttpConnector;
-use hyper::{Body, Client, Method, Request, StatusCode};
-use serde::{Deserialize, Serialize};
 use std::env;
 use std::error::Error;
 use std::fmt;
+use reqwest::{header::CONTENT_TYPE, Client, StatusCode};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 const ROLES_PATH: &str = "/roles";
@@ -17,7 +15,6 @@ const AUTHORIZATION_BEARER_TOKEN: &str = "Bearer";
 const ADMIN_BASE_URL_KEY: &str = "ADMIN_BASE_URL";
 const CLIENT_ID_KEY: &str = "CLIENT_ID";
 const JSON_CONTENT_TYPE: &str = "application/json";
-const CONTENT_TYPE_HEADER: &str = "content-type";
 
 #[derive(Debug)]
 struct KeycloakError(String);
@@ -32,7 +29,7 @@ pub struct KeycloakClient {
     oidc_client: OidcClient,
     admin_base_url: String,
     client_id: String,
-    http_client: Client<HttpConnector>,
+    http_client: Client,
 }
 
 impl KeycloakClient {
@@ -289,31 +286,23 @@ impl KeycloakClient {
     {
         // Get an access_token authorize at the keycloak instance, or reuse the active one.
         let access_token = self.oidc_client.get_access_token().await?;
-
-        // Build the request
-        let req = Request::builder()
-            .method(Method::GET)
-            .uri(endpoint)
-            .header(
-                AUTHORIZATION_HEADER,
-                format!("{} {}", AUTHORIZATION_BEARER_TOKEN, access_token),
-            )
-            .body(Body::empty())
-            .expect("unable to build request");
-
+       
         // Send the request and await the response.
-        let mut resp = self.http_client.request(req).await?;
+        let resp = self.http_client.get(endpoint)
+            .header(AUTHORIZATION_HEADER, format!("{} {}", AUTHORIZATION_BEARER_TOKEN, access_token))
+            .header(CONTENT_TYPE, JSON_CONTENT_TYPE)
+            .send().await?;
 
         // Check if this was successful.
         match resp.status() {
             StatusCode::OK => {
                 // Great success! Now deserialize the response stream async and return deserialized instance;.
-                Ok(utility::deserialize(&mut resp).await?)
+                Ok(resp.json::<Vec<T>>().await?)
             }
             _ => {
-                println!("{:?}", resp);
                 // Oh-oh, something went wrong, log the response body and throw the exception.
-                let _ = utility::print_response_body(&mut resp).await;
+                println!("Got responsecode: {}", resp.status());
+                println!("Response body: {}", resp.text().await?);
                 panic!("Unable to retrieve items from Keycloak")
             }
         }
@@ -334,20 +323,11 @@ impl KeycloakClient {
             serde_json::to_string(&request).expect("Unable to serialize create role request");
         // Get an access_token authorize at the keycloak instance.
         let access_token = self.oidc_client.get_access_token().await?;
-        // Build the request
-        let req = Request::builder()
-            .method(Method::POST)
-            .uri(endpoint)
-            .header(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
-            .header(
-                AUTHORIZATION_HEADER,
-                format!("{} {}", AUTHORIZATION_BEARER_TOKEN, access_token),
-            )
-            .body(Body::from(body))
-            .expect("unable to build request");
-
-        // Send the request and await the response.
-        let mut resp = self.http_client.request(req).await?;
+        let resp = self.http_client.post(endpoint)
+            .header(AUTHORIZATION_HEADER, format!("{} {}", AUTHORIZATION_BEARER_TOKEN, access_token))
+            .header(CONTENT_TYPE, JSON_CONTENT_TYPE)
+            .body(body)
+            .send().await?;
         // Check if this was successful.
         match resp.status() {
             StatusCode::CREATED => {
@@ -360,8 +340,8 @@ impl KeycloakClient {
             StatusCode::NO_CONTENT => Ok("".to_string()),
             _ => {
                 // Oh-oh, something went wrong, log the response body and throw the exception.
-                println!("{:?}", resp);
-                let _ = utility::print_response_body(&mut resp).await;
+                println!("Got responsecode: {}", resp.status());
+                println!("Response body: {}", resp.text().await?);
                 panic!("Unable to insert item in Keycloak")
             }
         }
@@ -370,26 +350,17 @@ impl KeycloakClient {
     async fn http_delete(&mut self, endpoint: String) -> Result<(), Box<dyn Error>> {
         // Get an access_token authorize at the keycloak instance.
         let access_token = self.oidc_client.get_access_token().await?;
-        // Build the request
-        let req = Request::builder()
-            .method(Method::DELETE)
-            .uri(endpoint)
-            .header(
-                AUTHORIZATION_HEADER,
-                format!("{} {}", AUTHORIZATION_BEARER_TOKEN, access_token),
-            )
-            .body(Body::empty())
-            .expect("unable to build request");
-
-        // Send the request and await the response.
-        let mut resp = self.http_client.request(req).await?;
+        let resp = self.http_client.delete(endpoint)
+            .header(AUTHORIZATION_HEADER, format!("{} {}", AUTHORIZATION_BEARER_TOKEN, access_token))
+            .send().await?;
         // Check if this was successful.
         match resp.status() {
             StatusCode::NO_CONTENT => Ok(()),
             _ => {
                 // Oh-oh, something went wrong, log the response body and throw the exception.
-                println!("{:?}", resp);
-                let _ = utility::print_response_body(&mut resp).await;
+                // Oh-oh, something went wrong, log the response body and throw the exception.
+                println!("Got responsecode: {}", resp.status());
+                println!("Response body: {}", resp.text().await?);
                 panic!("Unable to insert item in Keycloak")
             }
         }
