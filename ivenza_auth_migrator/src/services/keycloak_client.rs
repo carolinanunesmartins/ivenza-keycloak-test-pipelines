@@ -80,8 +80,8 @@ impl KeycloakClient {
     }
 
     pub async fn clear_authorization(&mut self) -> Result<(), Box<dyn Error>> {
-        
         // clear permissions
+        println!("Clearing permissions");
         let permissions = self.get_permissions().await?;
         for permission in permissions {
             self.http_delete(format!(
@@ -92,6 +92,7 @@ impl KeycloakClient {
         }
 
         // clear policies
+        println!("Clearing policies");
         let policies = self.get_policies().await?;
         for policy in policies {
             self.http_delete(format!(
@@ -102,6 +103,7 @@ impl KeycloakClient {
         }
 
         // clear resources
+        println!("Clearing resources");
         let resources = self.get_resources().await?;
         for resource in resources {
             self.http_delete(format!(
@@ -112,6 +114,7 @@ impl KeycloakClient {
         }
 
         // clear scopes
+        println!("Clearing scopes");
         let scopes = self.get_scopes().await?;
         for scope in scopes {
             self.http_delete(format!(
@@ -120,6 +123,8 @@ impl KeycloakClient {
             ))
             .await?;
         }
+
+        println!("Authorization rules cleared successfully.");
 
         Ok(())
     }
