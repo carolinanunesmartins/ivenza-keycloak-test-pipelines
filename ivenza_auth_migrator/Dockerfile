@@ -18,6 +18,6 @@ RUN cd /tmp && \
     for deb in *.deb; do dpkg --extract $deb /dpkg || exit 10; done
 
 # use Ubuntu 20.04 as the runtime image
-FROM ubuntu:latest as runtime
+FROM fedora:latest as runtime
 COPY --from=builder /source/target/release/ivenza_auth_migrator /
 CMD ["./ivenza_auth_migrator"]
