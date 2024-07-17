@@ -17,7 +17,8 @@ RUN cd /tmp && \
     mkdir /dpkg && \
     for deb in *.deb; do dpkg --extract $deb /dpkg || exit 10; done
 
-# use Ubuntu 20.04 as the runtime image
+# use Fedora latest as the runtime image. 
+# Fedora ships with a good set of openssl libraries, and is more up-to-date than debian or ubuntu.
 FROM fedora:latest as runtime
 COPY --from=builder /source/target/release/ivenza_auth_migrator /
 CMD ["./ivenza_auth_migrator"]
