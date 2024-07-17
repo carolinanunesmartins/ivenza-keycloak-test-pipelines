@@ -13,6 +13,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize environment variables.
     dotenv().ok();
     let ivenza_client = services::IvenzaClient::new().await;
+
+    let mut keycloak_client = services::KeycloakClient::new();
+
+    // start with a clean slate
+    keycloak_client.clear_authorization().await?;
+
     RoleSyncer::sync(&ivenza_client).await?;
     ScopeSyncer::sync(&ivenza_client).await?;
     PolicySyncer::sync(&ivenza_client).await?;

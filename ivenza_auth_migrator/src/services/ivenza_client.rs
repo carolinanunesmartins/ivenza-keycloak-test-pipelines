@@ -25,18 +25,18 @@ impl IvenzaClient {
 
     /// Get's all the roles from Ivenza
     pub async fn get_roles(&self) -> Vec<Role> {
-        sqlx::query_as::<_, Role>("SELECT * FROM userRoles").fetch_all(&self.my_sql_pool).await.expect("error loading roles")
+        sqlx::query_as::<_, Role>("SELECT * FROM UserRoles").fetch_all(&self.my_sql_pool).await.expect("error loading roles")
     }
 
     pub async fn get_users(&self) -> Vec<User> {
-        sqlx::query_as::<_, User>("SELECT * FROM users WHERE state != 'DISABLED'").fetch_all(&self.my_sql_pool).await.expect("error loading users")
+        sqlx::query_as::<_, User>("SELECT * FROM Users WHERE state != 'DISABLED'").fetch_all(&self.my_sql_pool).await.expect("error loading users")
     }
 
     /// Gets all permissions from Ivenza.
     pub async fn get_permissions(&self) -> Vec<Permission> {
         let roles = self.get_roles().await;
         // get all the known permission, using the connection we just established
-        let ivenza_permissions = sqlx::query_as::<_, Permission>("SELECT * FROM userRolePermissions").fetch_all(&self.my_sql_pool).await.expect("error loading permissions");
+        let ivenza_permissions = sqlx::query_as::<_, Permission>("SELECT * FROM UserRolePermissions").fetch_all(&self.my_sql_pool).await.expect("error loading permissions");
         // filter out permissions for which no role exists.
         // There is no hard foreign key constraint in the database
         // So we can end up with permissions, that don't have a parent role in Ivenza

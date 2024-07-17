@@ -1,5 +1,4 @@
-use crate::services::utility;
-use hyper::{Client, Method, Request, StatusCode};
+use reqwest::{header::CONTENT_TYPE, StatusCode};
 use serde::Deserialize;
 use std::env;
 use urlencoding::encode;
@@ -9,7 +8,6 @@ const KEYCLOAK_CLIENT_ID_KEY: &str = "KEYCLOAK_CLIENT_ID";
 const KEYCLOAK_ADMIN_USERNAME_KEY: &str = "KEYCLOAK_ADMIN_USERNAME";
 const KEYCLOAK_ADMIN_PASSWORD_KEY: &str = "KEYCLOAK_ADMIN_PASSWORD";
 const TOKEN_RELATIVE_PATH: &str = "/protocol/openid-connect/token";
-const CONTENT_TYPE_HEADER: &str = "content-type";
 const WWW_FORM_ENCODED_CONTENT_TYPE: &str = "application/x-www-form-urlencoded";
 const PASSWORD_GRANT_TYPE: &str = "password";
 
@@ -61,32 +59,26 @@ impl OidcClient {
             encode(&self.password)
         );
 
-        // Build the request
-        let req = Request::builder()
-            .method(Method::POST)
-            .uri(token_endpoint)
-            .header(CONTENT_TYPE_HEADER, WWW_FORM_ENCODED_CONTENT_TYPE)
-            .body(request_body.into())
-            .expect("unable to build request");
-
-        // Construct a HttpClient
-        let client = Client::new();
-
-        // Send the request and await the response.
-        let mut resp = client.request(req).await?;
+        let client = reqwest::Client::new();
+        let resp = client
+            .post(&token_endpoint)
+            .header(CONTENT_TYPE, WWW_FORM_ENCODED_CONTENT_TYPE)
+            .body(request_body)
+            .send()
+            .await?;
 
         // Check if this was successful.
         match resp.status() {
             StatusCode::OK => {
                 // Great success! Now deserialize the response stream async and return the access_token.
-                let parsed: TokenResponse = utility::deserialize(&mut resp).await?;
+                let parsed = resp.json::<TokenResponse>().await?;
                 self.access_token = Some(parsed.access_token);
                 Ok(self.access_token.as_ref().unwrap())
             }
             _ => {
                 // Oh-oh, something went wrong, log the response body and throw the exception.k
                 println!("Got responsecode: {}", resp.status());
-                let _ = utility::print_response_body(&mut resp).await;
+                println!("Response body: {}", resp.text().await?);
                 panic!("Did not get a valid token from the OIDC client")
             }
         }
