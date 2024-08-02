@@ -4,16 +4,15 @@ env:
   MICROSERVICE_NAME: keycloak
   DOCKERFILE: docker/Dockerfile
   ACR_URL: uniconcreation.azurecr.io
+  KEYCLOAK_VERSION: 25.0.2
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - themes/**
-      - config/**
-      - docker/**
-      - .github/workflows/publish_keycloak_to_acr.yaml
+  workflow_dispatch:
+  release:
+    types: 
+      - prereleased
+      - released
+      - edited
 
 jobs:
   build:
@@ -27,9 +26,17 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
       - run: |
-          echo ${{ env.GITHUB_REF }}
-          IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/})
-          IMAGE_TAG=${IMAGE_TAG//\//-}
-          docker build -f ${{ env.DOCKERFILE }} -t ${{ env.ACR_URL }}/${{ env.MICROSERVICE_NAME }}:$IMAGE_TAG .
+          
+          IMAGE_TAG="${{ github.event.release.tag_name || github.ref_name }}"
+          if [[ "${{ github.event.release.prerelease }}" != "false" ]];
+            then IMAGE_TAG="$IMAGE_TAG-nightly";
+          fi
+          docker build . \
+            --tag ${{ env.ACR_URL }}/${{ env.MICROSERVICE_NAME }}:$IMAGE_TAG \
+            --build-arg KEYCLOAK_VERSION="${{ env.KEYCLOAK_VERSION }}" \
+            --label ivenza.build="${{ github.run_number }}" \
+            --label ivenza.ref="${{ github.ref_name }}" \
+            --label ivenza.commit="${{ github.sha }}" \
+            --file ${{ env.DOCKERFILE }}
           docker push ${{ env.ACR_URL }}/${{ env.MICROSERVICE_NAME }}:$IMAGE_TAG
 
