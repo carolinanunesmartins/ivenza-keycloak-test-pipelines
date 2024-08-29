@@ -4,15 +4,12 @@ env:
   MICROSERVICE_NAME: keycloak
   DOCKERFILE: docker/Dockerfile
   ACR_URL: uniconcreation.azurecr.io
-  KEYCLOAK_VERSION: 25.0.2
 
 on:
-  workflow_dispatch:
   release:
     types: 
       - prereleased
       - released
-      - edited
 
 jobs:
   build:
@@ -33,7 +30,6 @@ jobs:
           fi
           docker build . \
             --tag ${{ env.ACR_URL }}/${{ env.MICROSERVICE_NAME }}:$IMAGE_TAG \
-            --build-arg KEYCLOAK_VERSION="${{ env.KEYCLOAK_VERSION }}" \
             --label ivenza.build="${{ github.run_number }}" \
             --label ivenza.ref="${{ github.ref_name }}" \
             --label ivenza.commit="${{ github.sha }}" \

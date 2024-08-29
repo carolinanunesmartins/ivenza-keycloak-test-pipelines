@@ -1,7 +1,6 @@
 # This is the keycloak version to use.
 # when overridden at build time by passing KEYCLOAK_VERSION as an argument, the given value will be used in stead of this version
-ARG KEYCLOAK_VERSION=latest
-FROM quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
+FROM quay.io/keycloak/keycloak:25.0.2
 
 COPY ./themes/ivenza /opt/keycloak/themes/ivenza
 COPY ./themes/skantrae /opt/keycloak/themes/skantrae
