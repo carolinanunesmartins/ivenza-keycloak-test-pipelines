@@ -2,37 +2,27 @@
 
 <#--  using our own base layout as the style  -->
 <#import "skantrae-template.ftl" as layout>
-<#import "./components/card.ftl" as card>
-<#import "./components/heading.ftl" as heading>
-<#import "./components/text.ftl" as text>
 
 <@layout.registrationLayout displayMessage=false; section>
     <#if section = "header">
         <#if messageHeader??>
-        ${messageHeader}
+            ${kcSanitize(msg("${messageHeader}"))?no_esc}
         <#else>
         ${message.summary}
         </#if>
     <#elseif section = "form">
     <div id="kc-info-message">
-        <@card.card>
-            <@heading.h1>
-                ${kcSanitize(msg("kcUpdatePassTitle"))!"Title"}
-            </@heading.h1>
-            <@text.p>
-                ${kcSanitize(msg("kcInfoDescription"))!"Info explanation"}
-            </@text.p>
-            <div class="flex flex-row justify-end">
-                <@button.primaryButton type="button" id="redirectButton">
-                    <div class="flex flex-row gap-2">
-                        ${kcSanitize(msg("kcInfoLink"))!"Link"}
-                        <span class="material-symbols-outlined">arrow_right_alt</span>
-                    </div>
-                </@button.primaryButton>
-            </div>
-        </@card.card>
+        <p class="instruction">${message.summary}<#if requiredActions??><#list requiredActions>: <b><#items as reqActionItem>${kcSanitize(msg("requiredAction.${reqActionItem}"))?no_esc}<#sep>, </#items></b></#list><#else></#if></p>
+        <#if skipLink??>
+        <#else>
+            <#if pageRedirectUri?has_content>
+                <p><a href="${pageRedirectUri}">${kcSanitize(msg("backToApplication"))?no_esc}</a></p>
+            <#elseif actionUri?has_content>
+                <p><a href="${actionUri}">${kcSanitize(msg("proceedWithAction"))?no_esc}</a></p>
+            <#elseif (client.baseUrl)?has_content>
+                <p><a href="${client.baseUrl}">${kcSanitize(msg("backToApplication"))?no_esc}</a></p>
+            </#if>
+        </#if>
     </div>
-    <#--  allow the password visibility to be toggled  -->
-    <script type="module" src="${url.resourcesPath}/js/redirect.js"></script>
     </#if>
 </@layout.registrationLayout>
